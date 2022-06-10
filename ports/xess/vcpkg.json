@@ -1,0 +1,17 @@
+{
+  "name": "xess",
+  "version": "2.1.0",
+  "homepage": "https://github.com/intel/xess",
+  "description": "The XeSS 2 SDK is a set of real-time AI-based technologies that drastically boost your frame rate at the highest visual quality while keeping your game responsive. This repository contains the SDK for integrating XeSS 2 into your game or application.",
+  "license": null,
+  "dependencies": [
+    {
+      "name" : "vcpkg-cmake",
+      "host" : true
+    },
+    {
+      "name" : "vcpkg-cmake-config",
+      "host" : true
+    }
+  ]
+}

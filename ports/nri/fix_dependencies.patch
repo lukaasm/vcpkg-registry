@@ -1,0 +1,530 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 5b0f453..57c2c46 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -47,6 +47,8 @@ option(NRI_ENABLE_VK_SUPPORT "Enable Vulkan backend" ON)
+ option(NRI_ENABLE_VALIDATION_SUPPORT "Enable Validation backend (otherwise 'enableNRIValidation' is ignored)" ON)
+ option(NRI_ENABLE_NIS_SDK "Enable NVIDIA Image Sharpening SDK" OFF)
+ option(NRI_ENABLE_IMGUI_EXTENSION "Enable 'NRIImgui' extension" OFF)
++option(NRI_USE_SYSTEM_LIBRARIES "Use system libraries" OFF)
++option(NRI_INSTALL "Generate Install target" ON)
+ 
+ cmake_dependent_option(NRI_ENABLE_D3D11_SUPPORT "Enable D3D11 backend" ON "WIN32" OFF)
+ cmake_dependent_option(NRI_ENABLE_D3D12_SUPPORT "Enable D3D12 backend" ON "WIN32" OFF)
+@@ -114,98 +116,128 @@ set(DEPS)
+ 
+ # Dependencies: URL - good (no fat ".git" folder)
+ if(NRI_ENABLE_AGILITY_SDK_SUPPORT)
+-    # Agility SDK
+-    FetchContent_Declare(
+-        agilitysdk
+-        DOWNLOAD_EXTRACT_TIMESTAMP 1
+-        DOWNLOAD_NO_PROGRESS 1
+-        SOURCE_SUBDIR "ignore CMakeLists.txt"
+-        URL https://www.nuget.org/api/v2/package/Microsoft.Direct3D.D3D12/1.${NRI_AGILITY_SDK_VERSION_MAJOR}.${NRI_AGILITY_SDK_VERSION_MINOR}
+-    )
+-    list(APPEND DEPS agilitysdk)
++    if(NRI_USE_SYSTEM_LIBRARIES)
++        find_package(directx-headers CONFIG REQUIRED)
++        find_package(directx12-agility CONFIG REQUIRED)
++    else()
++        # Agility SDK
++        FetchContent_Declare(
++            agilitysdk
++            DOWNLOAD_EXTRACT_TIMESTAMP 1
++            DOWNLOAD_NO_PROGRESS 1
++            SOURCE_SUBDIR "ignore CMakeLists.txt"
++            URL https://www.nuget.org/api/v2/package/Microsoft.Direct3D.D3D12/1.${NRI_AGILITY_SDK_VERSION_MAJOR}.${NRI_AGILITY_SDK_VERSION_MINOR}
++        )
++        list(APPEND DEPS agilitysdk)
++    endif()
+ endif()
+ 
+ if(NRI_ENABLE_NVTX_SUPPORT)
+-    # NVTX
+-    FetchContent_Declare(
+-        nvtx
+-        DOWNLOAD_EXTRACT_TIMESTAMP 1
+-        DOWNLOAD_NO_PROGRESS 1
+-        SOURCE_SUBDIR "ignore CMakeLists.txt"
+-        URL https://github.com/NVIDIA/NVTX/archive/refs/tags/v3.2.2.zip
+-    )
+-    list(APPEND DEPS nvtx)
++    if(NRI_USE_SYSTEM_LIBRARIES)
++        message(FATAL_ERROR "NVTX support requires the NVTX library to be installed")
++    else()
++        # NVTX
++        FetchContent_Declare(
++            nvtx
++            DOWNLOAD_EXTRACT_TIMESTAMP 1
++            DOWNLOAD_NO_PROGRESS 1
++            SOURCE_SUBDIR "ignore CMakeLists.txt"
++            URL https://github.com/NVIDIA/NVTX/archive/refs/tags/v3.2.2.zip
++        )
++        list(APPEND DEPS nvtx)
++    endif()
+ endif()
+ 
+ if(NRI_ENABLE_VK_SUPPORT)
+-    # Vulkan headers
+-    FetchContent_Declare(
+-        vulkan_headers
+-        DOWNLOAD_EXTRACT_TIMESTAMP 1
+-        DOWNLOAD_NO_PROGRESS 1
+-        SOURCE_SUBDIR "ignore CMakeLists.txt"
+-        URL https://github.com/KhronosGroup/Vulkan-Headers/archive/refs/tags/v1.4.325.zip
+-    )
+-    list(APPEND DEPS vulkan_headers)
++    if(NRI_USE_SYSTEM_LIBRARIES)
++        find_package(VulkanHeaders CONFIG REQUIRED)
++        find_package(VulkanMemoryAllocator CONFIG REQUIRED)
++    else()
++        # Vulkan headers
++        FetchContent_Declare(
++            vulkan_headers
++            DOWNLOAD_EXTRACT_TIMESTAMP 1
++            DOWNLOAD_NO_PROGRESS 1
++            SOURCE_SUBDIR "ignore CMakeLists.txt"
++            URL https://github.com/KhronosGroup/Vulkan-Headers/archive/refs/tags/v1.4.325.zip
++        )
++        list(APPEND DEPS vulkan_headers)
+ 
+-    # Vulkan MA
+-    FetchContent_Declare(
+-        vma
+-        DOWNLOAD_EXTRACT_TIMESTAMP 1
+-        DOWNLOAD_NO_PROGRESS 1
+-        SOURCE_SUBDIR "ignore CMakeLists.txt"
+-        URL https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator/archive/refs/tags/v3.3.0.zip
+-    )
+-    list(APPEND DEPS vma)
++        # Vulkan MA
++        FetchContent_Declare(
++            vma
++            DOWNLOAD_EXTRACT_TIMESTAMP 1
++            DOWNLOAD_NO_PROGRESS 1
++            SOURCE_SUBDIR "ignore CMakeLists.txt"
++            URL https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator/archive/refs/tags/v3.3.0.zip
++        )
++        list(APPEND DEPS vma)
++    endif()
+ endif()
+ 
+ if(NRI_ENABLE_NGX_SDK)
+-    # NVIDIA NGX SDK
+-    FetchContent_Declare(
+-        ngx
+-        DOWNLOAD_EXTRACT_TIMESTAMP 1
+-        DOWNLOAD_NO_PROGRESS 1
+-        SOURCE_SUBDIR "ignore CMakeLists.txt"
+-        URL https://github.com/NVIDIA/DLSS/archive/refs/tags/v310.3.0.zip
+-    )
+-    list(APPEND DEPS ngx)
++    if(NRI_USE_SYSTEM_LIBRARIES)
++        message(FATAL_ERROR "NGX support requires the NGX library to be installed")
++    else()
++        # NVIDIA NGX SDK
++        FetchContent_Declare(
++            ngx
++            DOWNLOAD_EXTRACT_TIMESTAMP 1
++            DOWNLOAD_NO_PROGRESS 1
++            SOURCE_SUBDIR "ignore CMakeLists.txt"
++            URL https://github.com/NVIDIA/DLSS/archive/refs/tags/v310.3.0.zip
++        )
++        list(APPEND DEPS ngx)
++    endif()
+ endif()
+ 
+ if(NRI_ENABLE_FFX_SDK)
+-    # AMD FidelityFX SDK
+-    FetchContent_Declare(
+-        ffx
+-        DOWNLOAD_EXTRACT_TIMESTAMP 1
+-        DOWNLOAD_NO_PROGRESS 1
+-        SOURCE_SUBDIR "ignore CMakeLists.txt"
+-        URL https://github.com/GPUOpen-LibrariesAndSDKs/FidelityFX-SDK/releases/download/v1.1.4/FidelityFX-SDK-v1.1.4.zip
+-    )
+-    list(APPEND DEPS ffx)
++    if(NRI_USE_SYSTEM_LIBRARIES)
++        message(FATAL_ERROR "AMD FidelityFX support requires")
++    else()
++        # AMD FidelityFX SDK
++        FetchContent_Declare(
++            ffx
++            DOWNLOAD_EXTRACT_TIMESTAMP 1
++            DOWNLOAD_NO_PROGRESS 1
++            SOURCE_SUBDIR "ignore CMakeLists.txt"
++            URL https://github.com/GPUOpen-LibrariesAndSDKs/FidelityFX-SDK/releases/download/v1.1.4/FidelityFX-SDK-v1.1.4.zip
++        )
++        list(APPEND DEPS ffx)
++    endif()
+ endif()
+ 
+ if(NRI_ENABLE_XESS_SDK)
+-    # INTEL XeSS SDK
+-    FetchContent_Declare(
+-        xess
+-        DOWNLOAD_EXTRACT_TIMESTAMP 1
+-        DOWNLOAD_NO_PROGRESS 1
+-        SOURCE_SUBDIR "ignore CMakeLists.txt"
+-        URL https://github.com/intel/xess/releases/download/v2.1.0/XeSS_SDK_2.1.0.zip
+-    )
+-    list(APPEND DEPS xess)
++    if(NRI_USE_SYSTEM_LIBRARIES)
++        message(FATAL_ERROR "AMD FidelityFX support requires")
++    else()
++        # INTEL XeSS SDK
++        FetchContent_Declare(
++            xess
++            DOWNLOAD_EXTRACT_TIMESTAMP 1
++            DOWNLOAD_NO_PROGRESS 1
++            SOURCE_SUBDIR "ignore CMakeLists.txt"
++            URL https://github.com/intel/xess/releases/download/v2.1.0/XeSS_SDK_2.1.0.zip
++        )
++        list(APPEND DEPS xess)
++    endif()
+ endif()
+ 
+ # Dependencies: GIT_REPOSITORY - worse (because of ".git" folder)
+ if(NRI_ENABLE_D3D12_SUPPORT)
+-    # D3D12 MA
+-    FetchContent_Declare(
+-        d3d12ma
+-        GIT_REPOSITORY https://github.com/GPUOpen-LibrariesAndSDKs/D3D12MemoryAllocator.git
+-        GIT_TAG v3.0.1
+-        GIT_SHALLOW 1
+-        SOURCE_SUBDIR "ignore CMakeLists.txt"
+-    )
+-    list(APPEND DEPS d3d12ma)
++    if(NRI_USE_SYSTEM_LIBRARIES)
++        find_package(D3D12MemoryAllocator CONFIG REQUIRED)
++    else()
++        # D3D12 MA
++        FetchContent_Declare(
++            d3d12ma
++            GIT_REPOSITORY https://github.com/GPUOpen-LibrariesAndSDKs/D3D12MemoryAllocator.git
++            GIT_TAG v3.0.1
++            GIT_SHALLOW 1
++            SOURCE_SUBDIR "ignore CMakeLists.txt"
++        )
++        list(APPEND DEPS d3d12ma)
++    endif()
+ endif()
+ 
+ if(NRI_ENABLE_AMDAGS)
+@@ -346,21 +378,21 @@ set(SHARED_SOURCE
+ )
+ 
+ add_library(NRI_Shared STATIC)
++add_library(NRI::NRI_Shared ALIAS NRI_Shared)
++
+ target_sources(NRI_Shared
+     PRIVATE
+         ${SHARED_SOURCE}
+ )
+ target_include_directories(NRI_Shared
+     PUBLIC
+-        "Include"
+-        "Source/Shared"
++        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Include>
++        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Source/Shared>
++        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+     PRIVATE
+         $<$<BOOL:${NRI_ENABLE_AGILITY_SDK_SUPPORT}>:
+             ${agilitysdk_SOURCE_DIR}/build/native/include
+         >
+-        $<$<BOOL:${NRI_ENABLE_VK_SUPPORT}>:
+-            ${vulkan_headers_SOURCE_DIR}/include
+-        >
+         $<$<BOOL:${NRI_ENABLE_NGX_SDK}>:
+             ${ngx_SOURCE_DIR}/include
+         >
+@@ -411,6 +443,9 @@ target_link_libraries(NRI_Shared
+         $<$<BOOL:${NRI_ENABLE_XESS_SDK}>:
+             ${xess_SOURCE_DIR}/lib/libxess.lib
+         >
++        $<$<BOOL:${NRI_ENABLE_VK_SUPPORT}>:
++            Vulkan::Headers
++        >
+ )
+ set_target_properties(NRI_Shared
+     PROPERTIES
+@@ -422,13 +457,15 @@ if(NRI_ENABLE_NONE_SUPPORT)
+     set(NONE_SOURCE "Source/NONE/ImplNONE.cpp")
+ 
+     add_library(NRI_NONE STATIC)
++    add_library(NRI::NRI_NONE ALIAS NRI_NONE)
++
+     target_sources(NRI_NONE
+         PRIVATE
+             ${NONE_SOURCE}
+     )
+     target_link_libraries(NRI_NONE
+         PRIVATE
+-            NRI_Shared
++            NRI::NRI_Shared
+     )
+     set_target_properties(NRI_NONE
+         PROPERTIES
+@@ -476,6 +513,8 @@ if(NRI_ENABLE_D3D11_SUPPORT)
+     )
+ 
+     add_library(NRI_D3D11 STATIC)
++    add_library(NRI::NRI_D3D11 ALIAS NRI_D3D11)
++
+     target_sources(NRI_D3D11
+         PRIVATE
+             ${D3D11_SOURCE}
+@@ -493,7 +532,7 @@ if(NRI_ENABLE_D3D11_SUPPORT)
+     )
+     target_link_libraries(NRI_D3D11
+         PRIVATE
+-            NRI_Shared
++            NRI::NRI_Shared
+             d3d11
+             dxgi
+             dxguid
+@@ -511,11 +550,11 @@ endif()
+ if(NRI_ENABLE_D3D12_SUPPORT)
+     message("NRI: using Windows SDK ${CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION}")
+ 
+-    set(D3D12_VMA "${d3d12ma_SOURCE_DIR}/include/D3D12MemAlloc.h")
+-    source_group("External/Vma"
+-        FILES
+-            ${D3D12_VMA}
+-    )
++    # set(D3D12_VMA "${d3d12ma_SOURCE_DIR}/include/D3D12MemAlloc.h")
++    # source_group("External/Vma"
++    #     FILES
++    #         ${D3D12_VMA}
++    # )
+ 
+     set(D3D12_SOURCE
+         "Source/D3D12/AccelerationStructureD3D12.h"
+@@ -559,10 +598,11 @@ if(NRI_ENABLE_D3D12_SUPPORT)
+     )
+ 
+     add_library(NRI_D3D12 STATIC)
++    add_library(NRI::NRI_D3D12 ALIAS NRI_D3D12)
++
+     target_sources(NRI_D3D12
+         PRIVATE
+             ${D3D12_SOURCE}
+-            ${D3D12_VMA}
+             $<$<BOOL:${NRI_ENABLE_NVAPI}>:
+                 ${NVAPI_HEADERS}
+             >
+@@ -570,29 +610,30 @@ if(NRI_ENABLE_D3D12_SUPPORT)
+                 ${AMDAGS_HEADERS}
+             >
+     )
+-    target_include_directories(NRI_D3D12
+-        PRIVATE
+-            "${d3d12ma_SOURCE_DIR}/include"
+-            "${d3d12ma_SOURCE_DIR}/src"
+-            "${nvapi_SOURCE_DIR}"
+-            "${amdags_SOURCE_DIR}/ags_lib/inc"
+-            $<$<BOOL:${NRI_ENABLE_AGILITY_SDK_SUPPORT}>:
+-                ${agilitysdk_SOURCE_DIR}/build/native/include
+-            >
+-    )
++    # target_include_directories(NRI_D3D12
++    #     PRIVATE
++    #         "${d3d12ma_SOURCE_DIR}/include"
++    #         "${d3d12ma_SOURCE_DIR}/src"
++    #         "${nvapi_SOURCE_DIR}"
++    #         "${amdags_SOURCE_DIR}/ags_lib/inc"
++    #         $<$<BOOL:${NRI_ENABLE_AGILITY_SDK_SUPPORT}>:
++    #             ${agilitysdk_SOURCE_DIR}/build/native/include
++    #         >
++    # )
+     target_compile_definitions(NRI_D3D12
+         PRIVATE
+             NRI_AGILITY_SDK_VERSION_MAJOR=$<IF:$<BOOL:${NRI_ENABLE_AGILITY_SDK_SUPPORT}>,${NRI_AGILITY_SDK_VERSION_MAJOR},D3D12_SDK_VERSION>
+     )
+     target_link_libraries(NRI_D3D12
+         PRIVATE
+-            NRI_Shared
++            NRI::NRI_Shared
+             d3d12
+             dxgi
+             dxguid
+             $<$<BOOL:${NRI_ENABLE_NVAPI}>:
+                 ${NVAPI_LIB}
+             >
++            GPUOpen::D3D12MemoryAllocator
+     )
+     set_target_properties(NRI_D3D12
+         PROPERTIES
+@@ -673,16 +714,17 @@ if(NRI_ENABLE_VK_SUPPORT)
+     )
+ 
+     add_library(NRI_VK STATIC)
++    add_library(NRI::NRI_VK ALIAS NRI_VK)
++
+     target_sources(NRI_VK
+         PRIVATE
+             ${VK_SOURCE}
+-            ${VK_VMA}
+-    )
+-    target_include_directories(NRI_VK
+-        PRIVATE
+-            "${vma_SOURCE_DIR}/include"
+-            "${vulkan_headers_SOURCE_DIR}/include"
+     )
++    # target_include_directories(NRI_VK
++    #     PRIVATE
++    #         "${vma_SOURCE_DIR}/include"
++    #         "${vulkan_headers_SOURCE_DIR}/include"
++    # )
+     target_compile_definitions(NRI_VK
+         PRIVATE
+             $<$<BOOL:${WIN32}>:
+@@ -700,10 +742,12 @@ if(NRI_ENABLE_VK_SUPPORT)
+     )
+     target_link_libraries(NRI_VK
+         PRIVATE
+-            NRI_Shared
++            NRI::NRI_Shared
+             $<$<BOOL:${APPLE}>:
+                 ${Vulkan_LIBRARIES}
+             >
++        PUBLIC
++            Vulkan::Headers GPUOpen::VulkanMemoryAllocator
+     )
+     set_target_properties(NRI_VK
+         PROPERTIES
+@@ -754,13 +798,14 @@ if(NRI_ENABLE_VALIDATION_SUPPORT)
+     )
+ 
+     add_library(NRI_Validation STATIC)
++    add_library(NRI::NRI_Validation ALIAS NRI_Validation)
+     target_sources(NRI_Validation
+         PRIVATE
+             ${NRI_VALIDATION_SOURCE}
+     )
+     target_link_libraries(NRI_Validation
+         PRIVATE
+-            NRI_Shared
++            NRI::NRI_Shared
+     )
+     set_target_properties(NRI_Validation
+         PROPERTIES
+@@ -847,11 +892,9 @@ target_sources(NRI
+         > # debugger markup
+ )
+ target_include_directories(NRI
+-    PRIVATE
+-        "${nvtx_SOURCE_DIR}/c/include/"
+-        "${vulkan_headers_SOURCE_DIR}/include"
+     PUBLIC
+-        "Include"
++        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Include>
++        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+ )
+ target_compile_definitions(NRI
+     PRIVATE
+@@ -868,27 +911,18 @@ target_compile_definitions(NRI
+             NRI_ENABLE_AGILITY_SDK_SUPPORT=1
+         >
+ )
++
+ target_link_libraries(NRI
+     PRIVATE
+-        NRI_Shared
++        NRI::NRI_Shared
+         $<$<NOT:$<BOOL:${WIN32}>>:
+             ${CMAKE_DL_LIBS}
+         >
+-        $<$<BOOL:${NRI_ENABLE_NONE_SUPPORT}>:
+-            NRI_NONE
+-        >
+-        $<$<BOOL:${NRI_ENABLE_D3D11_SUPPORT}>:
+-            NRI_D3D11
+-        >
+-        $<$<BOOL:${NRI_ENABLE_D3D12_SUPPORT}>:
+-            NRI_D3D12
+-        >
+-        $<$<BOOL:${NRI_ENABLE_VK_SUPPORT}>:
+-            NRI_VK
+-        >
+-        $<$<BOOL:${NRI_ENABLE_VALIDATION_SUPPORT}>:
+-            NRI_Validation
+-        >
++        $<TARGET_NAME_IF_EXISTS:NRI::NRI_NONE>
++        $<TARGET_NAME_IF_EXISTS:NRI::NRI_D3D11>
++        $<TARGET_NAME_IF_EXISTS:NRI::NRI_D3D12>
++        $<TARGET_NAME_IF_EXISTS:NRI::NRI_VK>
++        $<TARGET_NAME_IF_EXISTS:NRI::NRI_Validation>
+ )
+ set_target_properties(NRI
+     PROPERTIES
+@@ -1053,3 +1087,54 @@ if(NRI_ENABLE_SHADERMAKE)
+ 
+     message("NRI: shaders path '${NRI_SHADERS_PATH}'")
+ endif()
++
++
++if(NRI_INSTALL)
++    set(EXPORT_PRIVATE_TARGETS)
++    if (NRI_STATIC_LIBRARY)
++        if(NRI_ENABLE_VK_SUPPORT)
++            list(APPEND EXPORT_PRIVATE_TARGETS NRI_VK )
++        endif()
++
++        if(NRI_ENABLE_D3D11_SUPPORT)
++            list(APPEND EXPORT_PRIVATE_TARGETS NRI_D3D11 )
++        endif()
++
++        if(NRI_ENABLE_D3D12_SUPPORT)
++            list(APPEND EXPORT_PRIVATE_TARGETS NRI_D3D12 )
++        endif()
++    endif()
++    
++    include(GNUInstallDirs)
++    # Install the library and its headers
++    install(TARGETS NRI NRI_Shared ${EXPORT_PRIVATE_TARGETS}
++            EXPORT NRI-Targets
++            ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
++            LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
++            RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
++
++    # Generate and install *-targets.cmake
++    install(EXPORT NRI-Targets
++            FILE NRI-Targets.cmake
++            NAMESPACE NRI::
++            DESTINATION share/NRI)
++
++    install(DIRECTORY "Include/" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
++
++    if(NRI_STATIC_LIBRARY)
++        #install(FILES $<TARGET_PDB_FILE:NRI> DESTINATION "${CMAKE_INSTALL_LIBDIR}" OPTIONAL)
++    else()
++        install(FILES $<TARGET_PDB_FILE:NRI> DESTINATION "${CMAKE_INSTALL_BINDIR}" OPTIONAL)
++    endif()
++
++    # Generate the config file in the current binary dir (this ensures it's not placed directly in source)
++    file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/NRI-Config.cmake"
++    "include(CMakeFindDependencyMacro)\n"
++    "find_dependency(VulkanHeaders)\n"
++    "find_dependency(VulkanMemoryAllocator)\n"
++    "include(\"\${CMAKE_CURRENT_LIST_DIR}/NRI-Targets.cmake\")\n"
++    )
++    # Install the generated config file
++    install(FILES "${CMAKE_CURRENT_BINARY_DIR}/NRI-Config.cmake"
++            DESTINATION share/NRI)
++endif()
+\ No newline at end of file
+diff --git a/Source/D3D12/ResourceAllocatorD3D12.hpp b/Source/D3D12/ResourceAllocatorD3D12.hpp
+index 0ea317b..957fa5f 100644
+--- a/Source/D3D12/ResourceAllocatorD3D12.hpp
++++ b/Source/D3D12/ResourceAllocatorD3D12.hpp
+@@ -31,7 +31,7 @@
+         } while (false)
+ #endif
+ 
+-#include "D3D12MemAlloc.cpp"
++#include "D3D12MemAlloc.h"
+ 
+ #if defined(__GNUC__)
+ #    pragma GCC diagnostic pop

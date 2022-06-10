@@ -1,0 +1,17 @@
+{
+  "name": "ags",
+  "version": "6.3.0",
+  "homepage": "https://github.com/GPUOpen-LibrariesAndSDKs/AGS_SDK",
+  "description": "The AMD GPU Services (AGS) library provides software developers with the ability to query AMD GPU software and hardware state information that is not normally available through standard operating systems or graphics APIs. If you are serious about getting the most from your AMD GPU, then AGS can help you harness that power.",
+  "license": "MIT",
+  "dependencies": [
+    {
+      "name" : "vcpkg-cmake",
+      "host" : true
+    },
+    {
+      "name" : "vcpkg-cmake-config",
+      "host" : true
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+vcpkg_from_github(
+    OUT_SOURCE_PATH SOURCE_PATH
+    REPO NVIDIA-RTX/NRI
+    REF e87c87b83a6cdaac8f5772c51e857a8ed0f9052c
+    SHA512 4676745673d312c666ff939fd8331d643f05ae36e28a599ca3e3a1abe2ee89c6babf82c39c7c41a48110f8ad287edca6d724960ecbb9478026411ebade08a122
+    HEAD_REF main
+    PATCHES
+        fix_dependencies.patch
+)
+
+vcpkg_check_features(OUT_FEATURE_OPTIONS FEATURE_OPTIONS
+    FEATURES
+        none        NRI_ENABLE_NONE_SUPPORT
+        vulkan      NRI_ENABLE_VK_SUPPORT
+        d3d11       NRI_ENABLE_D3D11_SUPPORT
+        d3d12       NRI_ENABLE_D3D12_SUPPORT
+        validation  NRI_ENABLE_VALIDATION_SUPPORT
+        imgui       NRI_ENABLE_IMGUI_EXTENSION
+)
+
+# if ("imgui" IN_LIST FEATURES)
+#     set(TOOL_SHADERMAKE ${CURRENT_HOST_INSTALLED_DIR}/tools/shadermake/ShaderMake${VCPKG_HOST_EXECUTABLE_SUFFIX})
+#     find_program(SHADERMAKE_DXC_VK_PATH "$ENV{VULKAN_SDK}/Bin/dxc")
+# endif()
+
+string(COMPARE EQUAL "${VCPKG_LIBRARY_LINKAGE}" "static" NRI_STATIC_LIBRARY)
+
+vcpkg_cmake_configure(
+    SOURCE_PATH "${SOURCE_PATH}"
+    OPTIONS
+        ${FEATURE_OPTIONS}
+        -DNRI_USE_SYSTEM_LIBRARIES=ON
+        -DNRI_INSTALL=ON
+        -DNRI_ENABLE_NVTX_SUPPORT=OFF
+        -DNRI_ENABLE_NIS_SDK=OFF
+        -DNRI_ENABLE_AMDAGS=OFF
+        -DNRI_ENABLE_NVAPI=OFF
+        -DNRI_ENABLE_NGX_SDK=OFF
+        -DNRI_ENABLE_FFX_SDK=OFF
+        -DNRI_ENABLE_XESS_SDK=OFF
+        -DNRI_ENABLE_DEBUG_NAMES_AND_ANNOTATIONS=OFF
+        -DNRI_ENABLE_VALIDATION_SUPPORT=OFF
+        -DNRI_ENABLE_AGILITY_SDK_SUPPORT=OFF
+        -DNRI_STATIC_LIBRARY=${NRI_STATIC_LIBRARY}
+)
+
+vcpkg_cmake_install()
+vcpkg_copy_pdbs()
+vcpkg_cmake_config_fixup(PACKAGE_NAME "nri")
+
+vcpkg_install_copyright(FILE_LIST "${SOURCE_PATH}/LICENSE.txt")
+
+file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug/include")
