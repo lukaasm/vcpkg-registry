@@ -12,6 +12,10 @@
       "baseline": "2023.11.25",
       "port-version": 0
     },
+    "nvrhi": {
+      "baseline": "1.2.0",
+      "port-version": 0
+    },
     "vectormath": {
       "baseline": "2017.01.02",
       "port-version": 0

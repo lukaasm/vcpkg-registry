@@ -1,0 +1,21 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index f875658..dde9fcd 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -54,12 +54,12 @@ endif()
+ 
+ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+ 
+-if (NVRHI_WITH_VULKAN AND NOT TARGET Vulkan-Headers AND NOT TARGET Vulkan::Headers)
+-    add_subdirectory(thirdparty/Vulkan-Headers)
++if (NVRHI_WITH_VULKAN)
++    find_package(VulkanHeaders CONFIG)
+ endif()
+ 
+-if(NVRHI_WITH_DX12 AND NOT TARGET DirectX-Headers AND NOT TARGET Microsoft::DirectX-Headers)
+-    add_subdirectory(thirdparty/DirectX-Headers)
++if(NVRHI_WITH_DX12)
++    find_package(directx-headers CONFIG REQUIRED)
+ endif()
+ 
+ if (NVRHI_WITH_RTXMU)
