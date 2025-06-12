@@ -1,6 +1,7 @@
 {
   "name": "nvrhi",
   "version": "1.2.0",
+  "port-version": 1,
   "description": "NVIDIA Rendering Hardware Interface, a library providing abstraction over Direct3D 11, Direct3D 12, and Vulkan 1.2.",
   "homepage": "https://github.com/NVIDIA-RTX/NVRHI",
   "license": "MIT",
