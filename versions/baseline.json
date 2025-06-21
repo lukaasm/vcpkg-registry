@@ -12,6 +12,10 @@
       "baseline": "2023.11.25",
       "port-version": 0
     },
+    "imgui-nvrhi": {
+      "baseline": "0.0.0",
+      "port-version": 0
+    },
     "nvrhi": {
       "baseline": "1.2.0",
       "port-version": 1
