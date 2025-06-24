@@ -1,0 +1,251 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 0c9f575..f9c7397 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -6,6 +6,8 @@ include(FetchContent)
+ # Create project
+ project(NRI LANGUAGES C CXX)
+ 
++include(GNUInstallDirs)
++
+ # Test packages availability ("find_package" works only for X11)
+ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+     find_path(XLIB_HEADERS NAMES "X11/Xlib.h")
+@@ -169,6 +171,8 @@ if(NRI_ENABLE_D3D11_SUPPORT OR NRI_ENABLE_D3D12_SUPPORT)
+     find_library(INPUT_LIB_DXGUID NAMES dxguid HINTS ${WINDOWS_SDK_LIB_PATH} REQUIRED)
+ endif()
+ 
++# Disable FetchContent
++if(0)
+ # Construct list of dependencies # TODO: update to latest releases from time to time
+ set(DEPS)
+ 
+@@ -309,6 +313,7 @@ if(DEPS)
+         file(REMOVE_RECURSE "${FETCHCONTENT_BASE_DIR}/${DEP}-tmp")
+     endforeach()
+ endif()
++endif()
+ 
+ # D3D extensions
+ if(NRI_ENABLE_D3D_EXTENSIONS)
+@@ -372,14 +377,14 @@ endif()
+ 
+ # D3D12
+ if(NRI_ENABLE_D3D12_SUPPORT)
+-    file(GLOB D3D12_VMA "${d3d12ma_SOURCE_DIR}/include/D3D12MemAlloc.h")
+-    source_group("External/vma" FILES ${D3D12_VMA})
++    find_package(D3D12MemoryAllocator CONFIG REQUIRED)
++    find_package(DirectX-Headers CONFIG REQUIRED)
+ 
+     file(GLOB D3D12_SOURCE "Source/D3D12/*")
+     source_group("" FILES ${D3D12_SOURCE})
+ 
+     if(NRI_ENABLE_D3D_EXTENSIONS)
+-        add_library(NRI_D3D12 STATIC ${D3D12_SOURCE} ${D3D12_VMA} ${NVAPI_HEADERS} ${AMDAGS_HEADERS})
++        add_library(NRI_D3D12 STATIC ${D3D12_SOURCE})
+         target_link_libraries(NRI_D3D12 PRIVATE ${NVAPI_LIB})
+     else()
+         add_library(NRI_D3D12 STATIC ${D3D12_SOURCE})
+@@ -390,17 +395,15 @@ if(NRI_ENABLE_D3D12_SUPPORT)
+     target_include_directories(NRI_D3D12 PRIVATE
+         "Include"
+         "Source/Shared"
+-        "${d3d12ma_SOURCE_DIR}/include"
+-        "${d3d12ma_SOURCE_DIR}/src"
+-        "${nvapi_SOURCE_DIR}"
+-        "${amdags_SOURCE_DIR}/ags_lib/inc"
+     )
+-    target_compile_definitions(NRI_D3D12 PRIVATE ${COMPILE_DEFINITIONS} NRI_AGILITY_SDK_VERSION_MAJOR=${NRI_AGILITY_SDK_VERSION_MAJOR})
++    target_compile_definitions(NRI_D3D12 PRIVATE ${COMPILE_DEFINITIONS})
+     target_compile_options(NRI_D3D12 PRIVATE ${COMPILE_OPTIONS})
+-    target_link_libraries(NRI_D3D12 PRIVATE NRI_Shared ${INPUT_LIB_D3D12} ${INPUT_LIB_DXGI} ${INPUT_LIB_DXGUID})
++    target_link_libraries(NRI_D3D12 PRIVATE NRI_Shared Microsoft::DirectX-Headers GPUOpen::D3D12MemoryAllocator ${INPUT_LIB_D3D12} ${INPUT_LIB_DXGI} ${INPUT_LIB_DXGUID})
+     set_property(TARGET NRI_D3D12 PROPERTY FOLDER ${PROJECT_NAME})
+ 
+     if(NRI_ENABLE_AGILITY_SDK_SUPPORT)
++        target_compile_definitions(NRI_D3D12 PRIVATE NRI_AGILITY_SDK_VERSION_MAJOR=${NRI_AGILITY_SDK_VERSION_MAJOR})
++
+         message("NRI: using AgilitySDK v1.${NRI_AGILITY_SDK_VERSION_MAJOR}.${NRI_AGILITY_SDK_VERSION_MINOR}")
+ 
+         target_include_directories(NRI_D3D12 PRIVATE "${agilitysdk_SOURCE_DIR}/build/native/include")
+@@ -424,8 +427,11 @@ endif()
+ 
+ # VK
+ if(NRI_ENABLE_VK_SUPPORT)
+-    file(GLOB VK_VMA "${vma_SOURCE_DIR}/include/vk_mem_alloc.h")
+-    source_group("External/vma" FILES ${VK_VMA})
++    find_package( VulkanHeaders CONFIG REQUIRED)
++    find_package( VulkanMemoryAllocator CONFIG REQUIRED)
++
++    #file(GLOB VK_VMA "${vma_SOURCE_DIR}/include/vk_mem_alloc.h")
++    #source_group("External/vma" FILES ${VK_VMA})
+ 
+     file(GLOB VK_SOURCE "Source/VK/*")
+     source_group("" FILES ${VK_SOURCE})
+@@ -434,12 +440,10 @@ if(NRI_ENABLE_VK_SUPPORT)
+     target_include_directories(NRI_VK PRIVATE
+         "Include"
+         "Source/Shared"
+-        "${vma_SOURCE_DIR}/include"
+-        "${vulkan_headers_SOURCE_DIR}/include"
+     )
+     target_compile_definitions(NRI_VK PRIVATE ${COMPILE_DEFINITIONS})
+     target_compile_options(NRI_VK PRIVATE ${COMPILE_OPTIONS})
+-    target_link_libraries(NRI_VK PRIVATE NRI_Shared)
++    target_link_libraries(NRI_VK PRIVATE NRI_Shared PUBLIC Vulkan::Headers GPUOpen::VulkanMemoryAllocator)
+     set_property(TARGET NRI_VK PROPERTY FOLDER ${PROJECT_NAME})
+ 
+     if(WIN32)
+@@ -498,7 +502,7 @@ if(NRI_ENABLE_AGILITY_SDK_SUPPORT)
+ endif()
+ 
+ if(NRI_ENABLE_VK_SUPPORT)
+-    target_include_directories(NRI_Shared PRIVATE "${vulkan_headers_SOURCE_DIR}/include")
++    target_link_libraries(NRI_Shared PRIVATE Vulkan::Headers)
+ endif()
+ 
+ if(NRI_ENABLE_NGX_SDK)
+@@ -570,7 +574,11 @@ else()
+     endif()
+ endif()
+ 
+-target_include_directories(${PROJECT_NAME} PUBLIC "Include")
++target_include_directories(${PROJECT_NAME} PUBLIC 
++    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Include>
++    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
++)
++
+ target_include_directories(${PROJECT_NAME} PRIVATE
+     "Source/Shared"
+     "${nvtx_SOURCE_DIR}/c/include/"
+@@ -726,3 +734,28 @@ if(NRI_ENABLE_NIS_SDK OR NRI_ENABLE_IMGUI_EXTENSION)
+ 
+     message("NRI: shaders path '${NRI_SHADERS_PATH}'")
+ endif()
++
++# Install the library and its headers
++install(TARGETS NRI
++        EXPORT NRI-Targets
++        ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
++        LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
++        RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
++
++# Generate and install *-targets.cmake 
++install(EXPORT NRI-Targets
++        FILE NRI-Targets.cmake
++        NAMESPACE NRI::
++        DESTINATION share/NRI)
++
++install(DIRECTORY "Include/" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
++
++# Generate the config file in the current binary dir (this ensures it's not placed directly in source)
++file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/NRI-Config.cmake"
++"include(CMakeFindDependencyMacro)\n"
++"include(\"\${CMAKE_CURRENT_LIST_DIR}/NRI-Targets.cmake\")\n"
++)
++
++# Install the generated config file
++install(FILES "${CMAKE_CURRENT_BINARY_DIR}/NRI-Config.cmake"
++        DESTINATION share/NRI)
+diff --git a/Include/Extensions/NRILowLatency.h b/Include/Extensions/NRILowLatency.h
+index 6ed3535..e17a1ab 100644
+--- a/Include/Extensions/NRILowLatency.h
++++ b/Include/Extensions/NRILowLatency.h
+@@ -18,6 +18,8 @@ NriEnum(LatencyMarker, uint8_t,
+     SIMULATION_END      = 1,            // at the end of the simulation execution each frame
+     RENDER_SUBMIT_START = 2,            // at the beginning of the render submission execution each frame (must not span into asynchronous rendering)
+     RENDER_SUBMIT_END   = 3,            // at the end of the render submission execution each frame
++    PRESENT_START       = 4,
++    PRESENT_END         = 5,
+     INPUT_SAMPLE        = 6             // just before the application gathers input data, but between SIMULATION_START and SIMULATION_END (yes, 6!)
+ );
+ 
+diff --git a/Source/D3D11/SwapChainD3D11.hpp b/Source/D3D11/SwapChainD3D11.hpp
+index 403168e..d18ff7c 100644
+--- a/Source/D3D11/SwapChainD3D11.hpp
++++ b/Source/D3D11/SwapChainD3D11.hpp
+@@ -192,7 +192,7 @@ NRI_INLINE Result SwapChainD3D11::WaitForPresent() {
+ 
+ NRI_INLINE Result SwapChainD3D11::Present() {
+     if (m_Flags & SwapChainBits::ALLOW_LOW_LATENCY)
+-        SetLatencyMarker((LatencyMarker)PRESENT_START);
++        SetLatencyMarker(LatencyMarker::PRESENT_START);
+ 
+     bool vsync = (m_Flags & SwapChainBits::VSYNC) != 0;
+     bool allowTearing = (m_Flags & SwapChainBits::ALLOW_TEARING) != 0;
+@@ -201,7 +201,7 @@ NRI_INLINE Result SwapChainD3D11::Present() {
+     RETURN_ON_BAD_HRESULT(&m_Device, hr, "IDXGISwapChain::Present()");
+ 
+     if (m_Flags & SwapChainBits::ALLOW_LOW_LATENCY)
+-        SetLatencyMarker((LatencyMarker)PRESENT_END);
++        SetLatencyMarker(LatencyMarker::PRESENT_END);
+ 
+     m_PresentId++;
+ 
+diff --git a/Source/D3D12/ResourceAllocatorD3D12.hpp b/Source/D3D12/ResourceAllocatorD3D12.hpp
+index 9cd4568..ec51554 100644
+--- a/Source/D3D12/ResourceAllocatorD3D12.hpp
++++ b/Source/D3D12/ResourceAllocatorD3D12.hpp
+@@ -31,7 +31,7 @@
+         } while (false)
+ #endif
+ 
+-#include "D3D12MemAlloc.cpp"
++#include "D3D12MemAlloc.h"
+ 
+ #if defined(__GNUC__)
+ #    pragma GCC diagnostic pop
+diff --git a/Source/D3D12/SwapChainD3D12.hpp b/Source/D3D12/SwapChainD3D12.hpp
+index a09fb66..7c99514 100644
+--- a/Source/D3D12/SwapChainD3D12.hpp
++++ b/Source/D3D12/SwapChainD3D12.hpp
+@@ -199,7 +199,7 @@ NRI_INLINE Result SwapChainD3D12::WaitForPresent() {
+ 
+ NRI_INLINE Result SwapChainD3D12::Present() {
+     if (m_Flags & SwapChainBits::ALLOW_LOW_LATENCY)
+-        SetLatencyMarker((LatencyMarker)PRESENT_START);
++        SetLatencyMarker(LatencyMarker::PRESENT_START);
+ 
+     bool vsync = (m_Flags & SwapChainBits::VSYNC) != 0;
+     bool allowTearing = (m_Flags & SwapChainBits::ALLOW_TEARING) != 0;
+@@ -208,7 +208,7 @@ NRI_INLINE Result SwapChainD3D12::Present() {
+     RETURN_ON_BAD_HRESULT(&m_Device, hr, "IDXGISwapChain::Present()");
+ 
+     if (m_Flags & SwapChainBits::ALLOW_LOW_LATENCY)
+-        SetLatencyMarker((LatencyMarker)PRESENT_END);
++        SetLatencyMarker(LatencyMarker::PRESENT_END);
+ 
+     m_PresentId++;
+ 
+diff --git a/Source/Shared/Shared.cpp b/Source/Shared/Shared.cpp
+index 5f82b46..9038add 100644
+--- a/Source/Shared/Shared.cpp
++++ b/Source/Shared/Shared.cpp
+@@ -1,8 +1,10 @@
+ // © 2021 NVIDIA Corporation
+ 
+ #ifndef _WIN32
+-#    include <csignal> // raise
+-#    include <cstdarg> // va_start, va_end
++#    include <csignal>          // raise
++#    include <cstdarg>          // va_start, va_end
++#else
++#    include <windows.h>
+ #endif
+ 
+ #include "SharedExternal.h"
+diff --git a/Source/Shared/SharedExternal.hpp b/Source/Shared/SharedExternal.hpp
+index 2e8cb14..454726f 100644
+--- a/Source/Shared/SharedExternal.hpp
++++ b/Source/Shared/SharedExternal.hpp
+@@ -794,8 +794,10 @@ constexpr std::array<Format, 131> VK_FORMAT_TABLE = {
+ Format nri::VKFormatToNRIFormat(uint32_t format) {
+     if (format < VK_FORMAT_TABLE.size())
+         return VK_FORMAT_TABLE[format];
++#if NRI_ENABLE_VK_SUPPORT
+     else if (format == VK_FORMAT_A4R4G4B4_UNORM_PACK16)
+         return Format::B4_G4_R4_A4_UNORM;
++#endif
+ 
+     return Format::UNKNOWN;
+ }
