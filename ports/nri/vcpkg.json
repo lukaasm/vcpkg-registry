@@ -31,14 +31,8 @@
       "description": "Enable 'NRIImgui' extension",
       "dependencies": [
           "imgui",
-          {
-            "name" : "shadermake",
-            "host" : true
-          },
-          {
-            "name" : "shader-slang",
-            "host" : true
-          }
+          "shadermake",
+          "shader-slang"
       ]
     }
   },

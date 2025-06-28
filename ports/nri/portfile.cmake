@@ -36,6 +36,7 @@ vcpkg_cmake_configure(
         -DNRI_ENABLE_VALIDATION_SUPPORT=OFF
         -DNRI_ENABLE_D3D_EXTENSIONS=OFF
         -DNRI_ENABLE_AGILITY_SDK_SUPPORT=OFF
+        -DNRI_STATIC_LIBRARY=${NRI_STATIC_LIBRARY}
     MAYBE_UNUSED_VARIABLES
         SHADERMAKE_PATH
         SHADERMAKE_FXC_PATH
@@ -44,7 +45,7 @@ vcpkg_cmake_configure(
 )
 
 vcpkg_cmake_install()
-#vcpkg_copy_pdbs()
+vcpkg_copy_pdbs()
 vcpkg_cmake_config_fixup(PACKAGE_NAME "nri")
 
 vcpkg_install_copyright(FILE_LIST "${SOURCE_PATH}/LICENSE.txt")

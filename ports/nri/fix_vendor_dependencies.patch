@@ -1,5 +1,5 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 0c9f575..bfdeb7b 100644
+index 0c9f575..52ec402 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -6,6 +6,8 @@ include(FetchContent)
@@ -158,7 +158,7 @@ index 0c9f575..bfdeb7b 100644
          WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
          VERBATIM
          SOURCES ${SHADERS}
-@@ -722,7 +729,32 @@ if(NRI_ENABLE_NIS_SDK OR NRI_ENABLE_IMGUI_EXTENSION)
+@@ -722,7 +729,38 @@ if(NRI_ENABLE_NIS_SDK OR NRI_ENABLE_IMGUI_EXTENSION)
  
      add_dependencies(NRI_Shared NRI_Shaders)
      target_include_directories(NRI_Shared PRIVATE "${NRI_SHADERS_PATH}")
@@ -182,6 +182,12 @@ index 0c9f575..bfdeb7b 100644
 +        DESTINATION share/NRI)
 +
 +install(DIRECTORY "Include/" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
++
++if(NRI_STATIC_LIBRARY)
++    install(FILES $<TARGET_PDB_FILE:NRI> DESTINATION "${CMAKE_INSTALL_LIBDIR}" OPTIONAL)
++else()
++    install(FILES $<TARGET_PDB_FILE:NRI> DESTINATION "${CMAKE_INSTALL_BINDIR}" OPTIONAL)
++endif()
 +
 +# Generate the config file in the current binary dir (this ensures it's not placed directly in source)
 +file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/NRI-Config.cmake"

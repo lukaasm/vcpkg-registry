@@ -5,5 +5,6 @@ if ( $action -eq "install" ) {
         $features = "core"
     }
     & "$Env:VCPKG_ROOT\vcpkg.exe" remove --overlay-ports=./ports $port_name
-    & "$Env:VCPKG_ROOT\vcpkg.exe" install --overlay-ports=./ports "$port_name[$features]" --editable
+    & "$Env:VCPKG_ROOT\vcpkg.exe" install --overlay-ports=./ports "$port_name[$features]" --editable --triplet=x64-windows-static-md
+    & "$Env:VCPKG_ROOT\vcpkg.exe" install --overlay-ports=./ports "$port_name[$features]" --editable --triplet=x64-windows 
 }
