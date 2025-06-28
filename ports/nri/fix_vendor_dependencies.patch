@@ -1,5 +1,5 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 0c9f575..f9c7397 100644
+index 0c9f575..a346b54 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -6,6 +6,8 @@ include(FetchContent)
@@ -118,7 +118,58 @@ index 0c9f575..f9c7397 100644
  target_include_directories(${PROJECT_NAME} PRIVATE
      "Source/Shared"
      "${nvtx_SOURCE_DIR}/c/include/"
-@@ -726,3 +734,28 @@ if(NRI_ENABLE_NIS_SDK OR NRI_ENABLE_IMGUI_EXTENSION)
+@@ -674,6 +682,7 @@ endif()
+ 
+ # Shaders
+ if(NRI_ENABLE_NIS_SDK OR NRI_ENABLE_IMGUI_EXTENSION)
++    find_package(ShaderMake CONFIG REQUIRED)
+     file(GLOB_RECURSE SHADERS
+         "Shaders/*.hlsl"
+         "Shaders/*.hlsli"
+@@ -685,12 +694,11 @@ if(NRI_ENABLE_NIS_SDK OR NRI_ENABLE_IMGUI_EXTENSION)
+         --compactProgress
+         --flatten
+         --stripReflection
+-        --WX
+         --sRegShift 0 --tRegShift 0 --bRegShift 0 --uRegShift 0
+         --headerBlob
+         --sourceDir "Shaders"
+         --ignoreConfigDir
+-        -c "Shaders/Shaders.cfg"
++        -c "Shaders/ShadersImGui.cfg"
+         -o "${NRI_SHADERS_PATH}"
+         -I "Shaders"
+         -I "Include"
+@@ -699,20 +707,19 @@ if(NRI_ENABLE_NIS_SDK OR NRI_ENABLE_IMGUI_EXTENSION)
+     set(SHADERMAKE_COMMANDS "")
+ 
+     if(NRI_ENABLE_D3D11_SUPPORT)
+-        set(SHADERMAKE_COMMANDS ${SHADERMAKE_COMMANDS} COMMAND ${SHADERMAKE_PATH} -p DXBC --compiler "${SHADERMAKE_FXC_PATH}" ${SHADERMAKE_GENERAL_ARGS})
++        set(SHADERMAKE_COMMANDS ${SHADERMAKE_COMMANDS} COMMAND ${SHADERMAKE_PATH} -p DXBC --compiler "${SHADERMAKE_FXC_PATH}" --slang --slangHLSL ${SHADERMAKE_GENERAL_ARGS})
+     endif()
+ 
+     if(NRI_ENABLE_D3D12_SUPPORT)
+-        set(SHADERMAKE_COMMANDS ${SHADERMAKE_COMMANDS} COMMAND ${SHADERMAKE_PATH} -p DXIL --compiler "${SHADERMAKE_DXC_PATH}" ${SHADERMAKE_GENERAL_ARGS})
++        set(SHADERMAKE_COMMANDS ${SHADERMAKE_COMMANDS} COMMAND ${SHADERMAKE_PATH} -p DXIL --compiler "${SHADERMAKE_DXC_PATH}" --slang --slangHLSL ${SHADERMAKE_GENERAL_ARGS})
+     endif()
+ 
+     if(NRI_ENABLE_VK_SUPPORT)
+-        set(SHADERMAKE_COMMANDS ${SHADERMAKE_COMMANDS} COMMAND ${SHADERMAKE_PATH} -p SPIRV --compiler "${SHADERMAKE_DXC_VK_PATH}" ${SHADERMAKE_GENERAL_ARGS})
++        set(SHADERMAKE_COMMANDS ${SHADERMAKE_COMMANDS} COMMAND ${SHADERMAKE_PATH} -p SPIRV --compiler "${SHADERMAKE_DXC_VK_PATH}" --slang --slangHLSL ${SHADERMAKE_GENERAL_ARGS})
+     endif()
+ 
+     add_custom_target(NRI_Shaders ALL
+         ${SHADERMAKE_COMMANDS}
+-        DEPENDS ShaderMake
+         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+         VERBATIM
+         SOURCES ${SHADERS}
+@@ -722,7 +729,32 @@ if(NRI_ENABLE_NIS_SDK OR NRI_ENABLE_IMGUI_EXTENSION)
+ 
+     add_dependencies(NRI_Shared NRI_Shaders)
+     target_include_directories(NRI_Shared PRIVATE "${NRI_SHADERS_PATH}")
+-    target_link_libraries(NRI_Shared PRIVATE ShaderMakeBlob)
++    target_link_libraries(NRI_Shared PRIVATE ShaderMake::ShaderMakeBlob)
  
      message("NRI: shaders path '${NRI_SHADERS_PATH}'")
  endif()

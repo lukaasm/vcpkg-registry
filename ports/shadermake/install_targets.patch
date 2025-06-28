@@ -1,0 +1,50 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index d800212..c93ea62 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -163,7 +163,10 @@ add_library(ShaderMakeBlob STATIC
+     "ShaderMake/ShaderBlob.h"
+     "ShaderMake/ShaderBlob.cpp"
+ )
+-target_include_directories(ShaderMakeBlob PUBLIC "")
++target_include_directories(ShaderMakeBlob PUBLIC 
++    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
++    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
++)
+ target_compile_options(ShaderMakeBlob PRIVATE ${COMPILE_OPTIONS})
+ set_target_properties(ShaderMakeBlob PROPERTIES FOLDER "ShaderMake" POSITION_INDEPENDENT_CODE ON)
+ 
+@@ -202,3 +205,32 @@ message(STATUS "SHADERMAKE_FXC_PATH = '${SHADERMAKE_FXC_PATH}'")
+ message(STATUS "SHADERMAKE_DXC_PATH = '${SHADERMAKE_DXC_PATH}'")
+ message(STATUS "SHADERMAKE_DXC_VK_PATH = '${SHADERMAKE_DXC_VK_PATH}'")
+ message(STATUS "SHADERMAKE_SLANG_PATH = '${SHADERMAKE_SLANG_PATH}'")
++
++include(GNUInstallDirs)
++
++install(TARGETS ShaderMake ShaderMakeBlob
++        EXPORT ShaderMake-Targets
++        ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
++        LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
++        RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
++
++install(EXPORT ShaderMake-Targets
++        FILE ShaderMake-Targets.cmake
++        NAMESPACE ShaderMake::
++        DESTINATION share/ShaderMake)
++
++install(DIRECTORY "ShaderMake/"
++    DESTINATION 
++        ${CMAKE_INSTALL_INCLUDEDIR}/ShaderMake
++    FILES_MATCHING 
++        PATTERN "*.h")
++
++# Generate the config file in the current binary dir (this ensures it's not placed directly in source)
++file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/ShaderMake-Config.cmake"
++"include(CMakeFindDependencyMacro)\n"
++"include(\"\${CMAKE_CURRENT_LIST_DIR}/ShaderMake-Targets.cmake\")\n"
++)
++
++# Install the generated config file
++install(FILES "${CMAKE_CURRENT_BINARY_DIR}/ShaderMake-Config.cmake"
++        DESTINATION share/ShaderMake)
+\ No newline at end of file
