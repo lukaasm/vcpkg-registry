@@ -1,5 +1,5 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 0c9f575..52ec402 100644
+index 0c9f575..51ba584 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -6,6 +6,8 @@ include(FetchContent)
@@ -158,7 +158,7 @@ index 0c9f575..52ec402 100644
          WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
          VERBATIM
          SOURCES ${SHADERS}
-@@ -722,7 +729,38 @@ if(NRI_ENABLE_NIS_SDK OR NRI_ENABLE_IMGUI_EXTENSION)
+@@ -722,7 +729,56 @@ if(NRI_ENABLE_NIS_SDK OR NRI_ENABLE_IMGUI_EXTENSION)
  
      add_dependencies(NRI_Shared NRI_Shaders)
      target_include_directories(NRI_Shared PRIVATE "${NRI_SHADERS_PATH}")
@@ -168,8 +168,23 @@ index 0c9f575..52ec402 100644
      message("NRI: shaders path '${NRI_SHADERS_PATH}'")
  endif()
 +
++set(EXPORT_PRIVATE_TARGETS)
++if (NRI_STATIC_LIBRARY)
++    if(NRI_ENABLE_VK_SUPPORT)
++        list(APPEND EXPORT_PRIVATE_TARGETS NRI_VK )
++    endif()
++
++    if(NRI_ENABLE_D3D11_SUPPORT)
++        list(APPEND EXPORT_PRIVATE_TARGETS NRI_D3D11 )
++    endif()
++
++    if(NRI_ENABLE_D3D12_SUPPORT)
++        list(APPEND EXPORT_PRIVATE_TARGETS NRI_D3D12 )
++    endif()
++endif()
++
 +# Install the library and its headers
-+install(TARGETS NRI
++install(TARGETS NRI NRI_Shared ${EXPORT_PRIVATE_TARGETS}
 +        EXPORT NRI-Targets
 +        ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
 +        LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
@@ -184,7 +199,7 @@ index 0c9f575..52ec402 100644
 +install(DIRECTORY "Include/" DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
 +
 +if(NRI_STATIC_LIBRARY)
-+    install(FILES $<TARGET_PDB_FILE:NRI> DESTINATION "${CMAKE_INSTALL_LIBDIR}" OPTIONAL)
++    #install(FILES $<TARGET_PDB_FILE:NRI> DESTINATION "${CMAKE_INSTALL_LIBDIR}" OPTIONAL)
 +else()
 +    install(FILES $<TARGET_PDB_FILE:NRI> DESTINATION "${CMAKE_INSTALL_BINDIR}" OPTIONAL)
 +endif()
@@ -192,6 +207,9 @@ index 0c9f575..52ec402 100644
 +# Generate the config file in the current binary dir (this ensures it's not placed directly in source)
 +file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/NRI-Config.cmake"
 +"include(CMakeFindDependencyMacro)\n"
++"find_dependency(VulkanHeaders)\n"
++"find_dependency(VulkanMemoryAllocator)\n"
++"find_dependency(ShaderMake)\n"
 +"include(\"\${CMAKE_CURRENT_LIST_DIR}/NRI-Targets.cmake\")\n"
 +)
 +
