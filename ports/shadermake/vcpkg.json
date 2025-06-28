@@ -1,0 +1,17 @@
+{
+  "name": "shadermake",
+  "version": "0.0.0",
+  "homepage": "https://github.com/NVIDIA-RTX/ShaderMake",
+  "description": "ShaderMake is a frond-end tool for batch multi-threaded shader compilation developed by NVIDIA DevTech.",
+  "license": "MIT",
+  "dependencies": [
+    {
+      "name" : "vcpkg-cmake",
+      "host" : true
+    },
+    {
+      "name" : "vcpkg-cmake-config",
+      "host" : true
+    }
+  ]
+}
