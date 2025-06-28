@@ -26,6 +26,20 @@
         "directx-headers",
         "d3d12-memory-allocator"
       ]
+    },
+    "imgui": {
+      "description": "Enable 'NRIImgui' extension",
+      "dependencies": [
+          "imgui",
+          {
+            "name" : "shadermake",
+            "host" : true
+          },
+          {
+            "name" : "shader-slang",
+            "host" : true
+          }
+      ]
     }
   },
   "dependencies": [
