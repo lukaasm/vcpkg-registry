@@ -27,12 +27,14 @@
         "d3d12-memory-allocator"
       ]
     },
+    "validation": {
+      "description": "Enable Validation backend."
+    },
     "imgui": {
       "description": "Enable 'NRIImgui' extension",
       "dependencies": [
           "imgui",
-          "shadermake",
-          "shader-slang"
+          "shadermake"
       ]
     }
   },
