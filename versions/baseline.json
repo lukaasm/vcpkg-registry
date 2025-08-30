@@ -1,5 +1,9 @@
 {
   "default": {
+    "imgui": {
+      "baseline": "1.92.2b",
+      "port-version": 0
+    },
     "nri": {
       "baseline": "175",
       "port-version": 0
