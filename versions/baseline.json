@@ -1,0 +1,8 @@
+{
+  "default": {
+    "nri": {
+      "baseline": "175",
+      "port-version": 0
+    }
+  }
+}
