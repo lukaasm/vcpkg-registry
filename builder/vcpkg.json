@@ -1,0 +1,16 @@
+{
+    "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
+    "name": "vcpkg-port-builder",
+    "version": "0",
+    "dependencies": [
+        "lsp",
+        "ned-embed",
+        {
+            "name": "shader-slang-rhi",
+            "features": [
+                "vulkan",
+                "d3d11"
+            ]
+        }
+    ]
+}
