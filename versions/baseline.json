@@ -8,6 +8,10 @@
       "baseline": "175",
       "port-version": 0
     },
+    "shader-slang-rhi": {
+      "baseline": "0",
+      "port-version": 0
+    },
     "vulkan-headers": {
       "baseline": "1.4.321.0",
       "port-version": 0
