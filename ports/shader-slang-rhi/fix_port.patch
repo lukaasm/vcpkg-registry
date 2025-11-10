@@ -1,5 +1,5 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 8104b75..85f2fa5 100644
+index 8104b75..7bb61ff 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -226,6 +226,10 @@ macro(copy_file IN_FILE OUT_DIR)
@@ -81,7 +81,7 @@ index 8104b75..85f2fa5 100644
          LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
          RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
      )
-@@ -948,4 +966,18 @@ if(SLANG_RHI_INSTALL)
+@@ -948,4 +966,28 @@ if(SLANG_RHI_INSTALL)
          FILES ${CMAKE_CURRENT_BINARY_DIR}/include/slang-rhi-config.h
          DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
      )
@@ -90,11 +90,21 @@ index 8104b75..85f2fa5 100644
 +        NAMESPACE slang::
 +        DESTINATION share/slang-rhi
 +    )
-+    file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/slang-rhi-config.cmake"
-+        "include(CMakeFindDependencyMacro)\n"
-+        "find_dependency(slang)\n"
-+        "find_package(VulkanHeaders)\n"
-+        "include(\"\${CMAKE_CURRENT_LIST_DIR}/slang-rhi-targets.cmake\")\n"
++    file(CONFIGURE
++        OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/slang-rhi-config.cmake"
++        CONTENT
++            [=[
++            include(CMakeFindDependencyMacro)
++
++            find_dependency(slang CONFIG)
++
++            if(@SLANG_RHI_ENABLE_VULKAN@)
++                find_dependency(VulkanHeaders CONFIG)
++            endif()
++
++            include("${CMAKE_CURRENT_LIST_DIR}/slang-rhi-targets.cmake")
++            ]=]
++        @ONLY
 +    )
 +    install(FILES "${CMAKE_CURRENT_BINARY_DIR}/slang-rhi-config.cmake"
 +            DESTINATION share/slang-rhi
