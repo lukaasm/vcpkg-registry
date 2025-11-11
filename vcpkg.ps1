@@ -19,7 +19,7 @@ if ( $action -eq "remove" ) {
 }
 
 if ( $action -eq "update" ) {
-    & "$Env:VCPKG_ROOT\vcpkg.exe" format-manifest "ports/nri/vcpkg.json"
+    & "$Env:VCPKG_ROOT\vcpkg.exe" format-manifest "ports/${port_name}/vcpkg.json"
 
     git add ports/$port_name
     git commit -m "- ${port_name}: update port"
