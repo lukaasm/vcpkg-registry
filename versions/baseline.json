@@ -1,4 +1,8 @@
 {
   "default": {
+    "imgui": {
+      "baseline": "1.92.5",
+      "port-version": 0
+    }
   }
 }
