@@ -1,4 +1,4 @@
-if (EXISTS "${CMAKE_CURRENT_LIST_DIR}/source")
+if (EXISTS "${CMAKE_CURRENT_LIST_DIR}/source/CMakeLists.txt")
     set( SOURCE_PATH "${CMAKE_CURRENT_LIST_DIR}/source")
 else()
     vcpkg_from_github(

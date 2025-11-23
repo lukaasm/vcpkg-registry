@@ -38,5 +38,5 @@ if ( $action -eq "commit" ) {
     & "$Env:VCPKG_ROOT\vcpkg.exe" x-add-version --classic --x-builtin-ports-root=./ports --x-builtin-registry-versions-dir=./versions $port_name --overwrite-version
 
     git -C . add versions
-    git -C . commit -m "- ${port_name}: update versions $features"
+    git -C . commit -m "- ${port_name}: update port $features" --amend
 }
