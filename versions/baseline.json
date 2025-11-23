@@ -7,6 +7,10 @@
     "ned-embed": {
       "baseline": "2025.09.23.151218",
       "port-version": 0
+    },
+    "shader-slang-rhi": {
+      "baseline": "0",
+      "port-version": 0
     }
   }
 }
