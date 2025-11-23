@@ -3,6 +3,10 @@
     "imgui": {
       "baseline": "1.92.5",
       "port-version": 0
+    },
+    "ned-embed": {
+      "baseline": "2025.09.23.151218",
+      "port-version": 0
     }
   }
 }

@@ -1,0 +1,25 @@
+{
+  "name": "ned-embed",
+  "version-string": "2025.09.23.151218",
+  "description": "A retro-style text editor with GL shader effects. NED offers Tree Sitter syntax highlighting, LSP integration, and a terminal emulator.",
+  "homepage": "https://github.com/lukaasm/imgui-ned-embed",
+  "license": "MIT",
+  "dependencies": [
+    "curl",
+    "freetype",
+    "imgui",
+    "libgit2",
+    "lsp",
+    "nlohmann-json",
+    "tree-sitter",
+    "utfcpp",
+    {
+      "name": "vcpkg-cmake",
+      "host": true
+    },
+    {
+      "name": "vcpkg-cmake-config",
+      "host": true
+    }
+  ]
+}
