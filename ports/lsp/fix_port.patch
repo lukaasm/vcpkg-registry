@@ -1,0 +1,13 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 25f1c74..b7ca4d2 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -151,7 +151,7 @@ if (LSP_INSTALL)
+ 	lsp_read_version()
+ 
+ 	include(CMakePackageConfigHelpers)
+-	set(EXPORT_CMAKE_CONFIG_DIR "${CMAKE_INSTALL_LIBDIR}/cmake/lsp/")
++	set(EXPORT_CMAKE_CONFIG_DIR "share/lsp/")
+ 
+ 	# write and install config files
+ 	write_basic_config_version_file(
