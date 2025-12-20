@@ -4,8 +4,8 @@ else()
     vcpkg_from_github(
         OUT_SOURCE_PATH SOURCE_PATH
         REPO shader-slang/slang-rhi
-        REF dfdecf49787b012f882c4c321695ba40275f678e
-        SHA512 7092642149e06ca7a6863d2901f2d44363ce0f1c1a11add1644b2636d108491e1aac671959320f89b2189339a09a56976f989138db862bd4921868260613e87c
+        REF a51266ab01ca2cdb3f6a6ac90c9a8ebbf2fb59ba
+        SHA512 9454cab5241a19236a72b472323a891a63267abb016818eeb64603e6b05a74888a828c06335905adf87915aa7de3324383e62b981b3c7f1cf82dfb2888adb6e8
         HEAD_REF main
         PATCHES
             fix_port.patch
