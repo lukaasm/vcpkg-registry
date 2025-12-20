@@ -3,8 +3,6 @@
     "name": "vcpkg-port-builder",
     "version": "0",
     "dependencies": [
-        "lsp",
-        "ned-embed",
         {
             "name": "shader-slang-rhi",
             "features": [
