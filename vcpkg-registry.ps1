@@ -14,8 +14,8 @@ if ( $action -eq "install" -or $action -eq "install-static" ) {
     if ( [string]::IsNullOrEmpty($features) ) {
         $features = "core"
     }
-    & "$Env:VCPKG_ROOT\vcpkg.exe" remove --classic --overlay-ports=$PSScriptRoot/ports $port_name --triplet=x64-windows-static-md --recurse $extra
-    & "$Env:VCPKG_ROOT\vcpkg.exe" install --classic --overlay-ports=$PSScriptRoot/ports "$port_name[$features]" --triplet=x64-windows-static-md $extra
+    & "$Env:VCPKG_ROOT\vcpkg.exe" remove --classic --overlay-ports=$PSScriptRoot/ports $port_name --triplet=x64-windows-static --recurse $extra
+    & "$Env:VCPKG_ROOT\vcpkg.exe" install --classic --overlay-ports=$PSScriptRoot/ports "$port_name[$features]" --triplet=x64-windows-static $extra
 }
 
 if ($action -eq "install" -or $action -eq "install-shared" ) {
@@ -28,7 +28,7 @@ if ($action -eq "install" -or $action -eq "install-shared" ) {
 
 if ( $action -eq "remove" ) {
     & "$Env:VCPKG_ROOT\vcpkg.exe" remove --classic --overlay-ports=$PSScriptRoot/ports $port_name --triplet=x64-windows --recurse $extra
-    & "$Env:VCPKG_ROOT\vcpkg.exe" remove --classic --overlay-ports=$PSScriptRoot/ports $port_name --triplet=x64-windows-static-md --recurse $extra
+    & "$Env:VCPKG_ROOT\vcpkg.exe" remove --classic --overlay-ports=$PSScriptRoot/ports $port_name --triplet=x64-windows-static --recurse $extra
 }
 
 if ( $action -eq "commit" ) {
