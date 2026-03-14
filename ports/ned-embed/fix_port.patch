@@ -1,0 +1,60 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index f82560d..c6dddad 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -50,7 +50,7 @@ endif()
+ 
+ find_package(CURL REQUIRED)
+ find_package(Freetype REQUIRED)
+-find_package(unofficial-libgit2 CONFIG REQUIRED)
++find_package(libgit2 CONFIG REQUIRED)
+ find_package(nlohmann_json CONFIG REQUIRED)
+ find_package(utf8cpp CONFIG REQUIRED)
+ find_package(unofficial-tree-sitter CONFIG REQUIRED)
+@@ -107,7 +107,7 @@ target_include_directories(ned_util PUBLIC
+   >
+ )
+ target_link_libraries(ned_util PUBLIC 
+-    unofficial::libgit2::libgit2
++    libgit2::libgit2package
+     nlohmann_json::nlohmann_json
+     utf8::cpp utf8cpp::utf8cpp
+ )
+@@ -138,7 +138,7 @@ target_include_directories(ned_embed PUBLIC
+ target_link_libraries(ned_embed PUBLIC
+     Freetype::Freetype
+     CURL::libcurl 
+-    unofficial::libgit2::libgit2
++    libgit2::libgit2package
+     unofficial::tree-sitter::tree-sitter
+     lsp::lsp
+     ZLIB::ZLIB
+diff --git a/CMakePresets.json b/CMakePresets.json
+index 509a332..c6918cb 100644
+--- a/CMakePresets.json
++++ b/CMakePresets.json
+@@ -6,7 +6,7 @@
+       "displayName": "Windows x64",
+       "binaryDir": "${sourceDir}/.build/${presetName}",
+       "installDir": "${sourceDir}/bin/",
+-      "generator": "Visual Studio 17 2022",
++      "generator": "Visual Studio 18 2026",
+       "architecture": {
+         "value": "x64",
+         "strategy": "external"
+diff --git a/vcpkg-configuration.json b/vcpkg-configuration.json
+index bb0ac2c..22a373a 100644
+--- a/vcpkg-configuration.json
++++ b/vcpkg-configuration.json
+@@ -2,9 +2,9 @@
+     "default-registry": {
+         "kind": "git",
+         "repository": "https://github.com/microsoft/vcpkg",
+-        "baseline": "3dd44b931481d7a8e9ba412621fa810232b66289"
++        "baseline": "c3173be258001c60814b6adf161322b6eb3688ee"
+     },
+     "overlay-ports": [
+-        "G:\\vcpkg-registry-builder\\ports"
++        "G:/vcpkg-registry/ports"
+     ]
+ }

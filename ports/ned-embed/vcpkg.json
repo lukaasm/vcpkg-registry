@@ -1,6 +1,7 @@
 {
   "name": "ned-embed",
   "version-string": "2025.09.23.151218",
+  "port-version": 1,
   "description": "A retro-style text editor with GL shader effects. NED offers Tree Sitter syntax highlighting, LSP integration, and a terminal emulator.",
   "homepage": "https://github.com/lukaasm/imgui-ned-embed",
   "license": "MIT",

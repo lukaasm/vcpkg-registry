@@ -4,3 +4,6 @@
 [submodule "ports/netimgui/source"]
 	path = ports/netimgui/source
 	url = https://github.com/sammyfreg/netImgui.git
+[submodule "ports/ned-embed/source"]
+	path = ports/ned-embed/source
+	url = https://github.com/lukaasm/imgui-ned-embed
