@@ -7,6 +7,8 @@ else()
         REF ${VERSION}
         SHA512 3c4cdce6c65d38e23b7bc524d1abf3ffcbc1af02a642365d948a39f4573abcffa6635caabd47f6aa2155c1796e81137bcc5a81b2229f2147a865ecb94fbf53ab
         HEAD_REF main
+        PATCHES
+            fix_port.patch
     )
 endif()
 

@@ -1,3 +1,6 @@
 [submodule "ports/shader-slang-rhi/source"]
 	path = ports/shader-slang-rhi/source
 	url = https://github.com/shader-slang/slang-rhi.git
+[submodule "ports/netimgui/source"]
+	path = ports/netimgui/source
+	url = https://github.com/sammyfreg/netImgui.git
