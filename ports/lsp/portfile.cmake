@@ -5,7 +5,7 @@ else()
         OUT_SOURCE_PATH SOURCE_PATH
         REPO leon-bckl/lsp-framework
         REF ${VERSION}
-        SHA512 3c4cdce6c65d38e23b7bc524d1abf3ffcbc1af02a642365d948a39f4573abcffa6635caabd47f6aa2155c1796e81137bcc5a81b2229f2147a865ecb94fbf53ab
+        SHA512 6622512dd6defe07fc18c5d99ce6d33430b78c86194661fcc8cd3bebba59471b9e68c84423ba2bce3427f4d8fa131481ff153ef455bf2f67d009734ff58204e5
         HEAD_REF main
         PATCHES
             fix_port.patch

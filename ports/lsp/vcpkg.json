@@ -1,7 +1,6 @@
 {
   "name": "lsp",
-  "version": "1.3.0",
-  "port-version": 1,
+  "version": "1.3.1",
   "description": "This is an implementation of the Language Server Protocol in C++. It can be used to implement both servers and clients that communicate using the LSP.",
   "homepage": "https://github.com/leon-bckl/lsp-framework",
   "license": "MIT",
