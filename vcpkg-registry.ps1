@@ -32,6 +32,8 @@ if ( $action -eq "remove" ) {
 }
 
 if ( $action -eq "commit" ) {
+    & "$Env:VCPKG_ROOT\vcpkg.exe" format-manifest "./ports/${port_name}/vcpkg.json"
+
     git -C . add ports/$port_name
     git -C . commit -m "- ${port_name}: update port $features"
 
