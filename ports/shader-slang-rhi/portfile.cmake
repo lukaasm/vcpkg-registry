@@ -1,3 +1,5 @@
+vcpkg_check_linkage(ONLY_DYNAMIC_LIBRARY)
+
 if (EXISTS "${CMAKE_CURRENT_LIST_DIR}/source/CMakeLists.txt")
     set( SOURCE_PATH "${CMAKE_CURRENT_LIST_DIR}/source")
 else()
