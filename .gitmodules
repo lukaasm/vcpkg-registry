@@ -7,3 +7,9 @@
 [submodule "ports/ned-embed/source"]
 	path = ports/ned-embed/source
 	url = https://github.com/lukaasm/imgui-ned-embed
+[submodule "sources/slang-rhi"]
+	path = sources/slang-rhi
+	url = https://github.com/shader-slang/slang-rhi.git
+[submodule "sources/shader-slang-rhi"]
+	path = sources/shader-slang-rhi
+	url = https://github.com/shader-slang/slang-rhi.git

@@ -1,18 +1,21 @@
 vcpkg_check_linkage(ONLY_DYNAMIC_LIBRARY)
 
-if (EXISTS "${CMAKE_CURRENT_LIST_DIR}/source/CMakeLists.txt")
-    set( SOURCE_PATH "${CMAKE_CURRENT_LIST_DIR}/source")
-else()
+set(SOURCE_PATH "${CMAKE_CURRENT_LIST_DIR}/../../sources/${PORT}/" )
+cmake_path(NORMAL_PATH SOURCE_PATH )
+
+if (NOT IS_DIRECTORY ${SOURCE_PATH})
     vcpkg_from_github(
         OUT_SOURCE_PATH SOURCE_PATH
         REPO shader-slang/slang-rhi
-        REF a51266ab01ca2cdb3f6a6ac90c9a8ebbf2fb59ba
-        SHA512 9454cab5241a19236a72b472323a891a63267abb016818eeb64603e6b05a74888a828c06335905adf87915aa7de3324383e62b981b3c7f1cf82dfb2888adb6e8
+        REF 155a262f972368fae9a90a89d7ea9f81c83dc5a7
+        SHA512 7a5a70a9435700659f68851ad7285ef695f2be72794a86175d821feedee220349122a7004e96d29db0fe076c3bd16c40199150744a90056f022a34bd8903fa47
         HEAD_REF main
         PATCHES
-            fix_port.patch
+            #fix_port.patch
     )
 endif()
+
+message("${PORT_NAME} - ${SOURCE_PATH}")
 
 vcpkg_check_features(OUT_FEATURE_OPTIONS FEATURE_OPTIONS
     FEATURES
