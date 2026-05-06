@@ -3,12 +3,6 @@
     "name": "vcpkg-port-builder",
     "version": "0",
     "dependencies": [
-        {
-            "name": "shader-slang-rhi",
-            "features": [
-                "vulkan",
-                "d3d11"
-            ]
-        }
+        "lsp"
     ]
 }

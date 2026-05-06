@@ -6,7 +6,7 @@
       "displayName": "Windows x64",
       "binaryDir": "${sourceDir}/.build/${presetName}",
       "installDir": "${sourceDir}/bin/",
-      "generator": "Visual Studio 17 2022",
+      "generator": "Visual Studio 18 2026",
       "architecture": {
         "value": "x64",
         "strategy": "external"
