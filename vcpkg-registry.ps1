@@ -3,8 +3,8 @@ param( $action, $port_name, $features, $extra )
 if ( $action -eq "update") {
     $port_source = "ports/${port_name}"
 
-    if ( Test-Path "${port_source}/source" ) {
-        git -C ${port_source}/source diff > $port_source/fix_port.patch
+    if ( Test-Path "sources/${port_name}" ) {
+        git -C sources/${port_name} diff > $port_source/fix_port.patch
     }
 
     & "$Env:VCPKG_ROOT\vcpkg.exe" format-manifest "./ports/${port_name}/vcpkg.json"
