@@ -139,7 +139,7 @@ index ee54dea..a12e296 100644
 +    )
  endif()
 diff --git a/include/slang-rhi.h b/include/slang-rhi.h
-index 2be55f9..524d7e9 100644
+index 2be55f9..8df00bd 100644
 --- a/include/slang-rhi.h
 +++ b/include/slang-rhi.h
 @@ -713,7 +713,7 @@ struct BufferRange
@@ -147,7 +147,7 @@ index 2be55f9..524d7e9 100644
  };
  
 -static const BufferRange kEntireBuffer = BufferRange{0ull, ~0ull};
-+static inline const BufferRange kEntireBuffer = BufferRange{0ull, ~0ull};
++inline const  BufferRange kEntireBuffer = BufferRange{0ull, ~0ull};
  
  enum class BufferUsage
  {
@@ -156,10 +156,10 @@ index 2be55f9..524d7e9 100644
  };
  
 -static const SubresourceRange kEntireTexture = SubresourceRange{0, 0xffffffff, 0, 0xffffffff};
-+static inline const SubresourceRange kEntireTexture = SubresourceRange{0, 0xffffffff, 0, 0xffffffff};
++inline const  SubresourceRange kEntireTexture = SubresourceRange{0, 0xffffffff, 0, 0xffffffff};
  
 -static const size_t kDefaultAlignment = 0xffffffff;
-+static inline const size_t kDefaultAlignment = 0xffffffff;
++inline const  size_t kDefaultAlignment = 0xffffffff;
  
  /// Data for a single subresource of a texture.
  ///
@@ -168,7 +168,7 @@ index 2be55f9..524d7e9 100644
  };
  
 -static const uint32_t kRemainingTextureSize = 0xffffffff;
-+static inline const uint32_t kRemainingTextureSize = 0xffffffff;
++inline const  uint32_t kRemainingTextureSize = 0xffffffff;
  struct Offset3D
  {
      uint32_t x = 0;
@@ -179,27 +179,27 @@ index 2be55f9..524d7e9 100644
 -static const uint32_t kAllLayers = 0xffffffff;
 -static const uint32_t kAllMips = 0xffffffff;
 -static const SubresourceRange kAllSubresources = {0, kAllLayers, 0, kAllMips};
-+static inline const uint32_t kAllLayers = 0xffffffff;
-+static inline const uint32_t kAllMips = 0xffffffff;
-+static inline const SubresourceRange kAllSubresources = {0, kAllLayers, 0, kAllMips};
++inline const  uint32_t kAllLayers = 0xffffffff;
++inline const  uint32_t kAllMips = 0xffffffff;
++inline const  SubresourceRange kAllSubresources = {0, kAllLayers, 0, kAllMips};
  
  struct TextureDesc
  {
 diff --git a/src/command-list.h b/src/command-list.h
-index 79f8fbe..294e249 100644
+index 79f8fbe..c4a513c 100644
 --- a/src/command-list.h
 +++ b/src/command-list.h
-@@ -360,7 +360,7 @@ struct Traits
-     template<>                                                                                                         \
+@@ -361,7 +361,7 @@ struct Traits
      struct Traits<x>                                                                                                   \
      {                                                                                                                  \
--        static const CommandID id = CommandID::x;                                                                      \
-+        static inline const CommandID id = CommandID::x;                                                                      \
-         static inline const char* name = #x;                                                                           \
+         static const CommandID id = CommandID::x;                                                                      \
+-        static inline const char* name = #x;                                                                           \
++        static const char* name = #x;                                                                           \
      };
  
+ SLANG_RHI_COMMANDS(SLANG_RHI_COMMAND_TRAITS_X)
 diff --git a/src/cpu/cpu-texture.h b/src/cpu/cpu-texture.h
-index 86b2f7d..f9a767c 100644
+index 86b2f7d..2ceb778 100644
 --- a/src/cpu/cpu-texture.h
 +++ b/src/cpu/cpu-texture.h
 @@ -11,7 +11,7 @@ struct CPUTextureBaseShapeInfo
@@ -207,12 +207,12 @@ index 86b2f7d..f9a767c 100644
  };
  
 -static const CPUTextureBaseShapeInfo kCPUTextureBaseShapeInfos[] = {
-+static inline const CPUTextureBaseShapeInfo kCPUTextureBaseShapeInfos[] = {
++inline const  CPUTextureBaseShapeInfo kCPUTextureBaseShapeInfos[] = {
      {1, 1, 1}, // Texture1D
      {1, 1, 1}, // Texture1DArray
      {2, 2, 1}, // Texture2D
 diff --git a/src/cuda/cuda-heap.h b/src/cuda/cuda-heap.h
-index 1a023c8..dba2c34 100644
+index 1a023c8..16e2e64 100644
 --- a/src/cuda/cuda-heap.h
 +++ b/src/cuda/cuda-heap.h
 @@ -13,7 +13,7 @@ class HeapImpl : public Heap
@@ -220,7 +220,7 @@ index 1a023c8..dba2c34 100644
      // Selected based on (https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#alignment)
      // Highest alignment requirement in CUDA is 128, for optimal memcpy performance.
 -    static const Size kAlignment = 128;
-+    static inline const Size kAlignment = 128;
++    inline const  Size kAlignment = 128;
  
      struct PendingFree
      {
