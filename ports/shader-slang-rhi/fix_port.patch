@@ -185,19 +185,6 @@ index 2be55f9..8df00bd 100644
  
  struct TextureDesc
  {
-diff --git a/src/command-list.h b/src/command-list.h
-index 79f8fbe..c4a513c 100644
---- a/src/command-list.h
-+++ b/src/command-list.h
-@@ -361,7 +361,7 @@ struct Traits
-     struct Traits<x>                                                                                                   \
-     {                                                                                                                  \
-         static const CommandID id = CommandID::x;                                                                      \
--        static inline const char* name = #x;                                                                           \
-+        static const char* name = #x;                                                                           \
-     };
- 
- SLANG_RHI_COMMANDS(SLANG_RHI_COMMAND_TRAITS_X)
 diff --git a/src/cpu/cpu-texture.h b/src/cpu/cpu-texture.h
 index 86b2f7d..2ceb778 100644
 --- a/src/cpu/cpu-texture.h
