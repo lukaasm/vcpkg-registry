@@ -1,0 +1,25 @@
+set(SOURCE_PATH "${CMAKE_CURRENT_LIST_DIR}/../../sources/${PORT}/")
+cmake_path(NORMAL_PATH SOURCE_PATH)
+
+if (NOT IS_DIRECTORY ${SOURCE_PATH})
+    vcpkg_from_git(
+        OUT_SOURCE_PATH SOURCE_PATH
+        URL "__GIT_URL__"
+        REF main
+    )
+endif()
+
+# Pin REF to a commit for reproducible builds when falling back to vcpkg_from_git.
+
+string(COMPARE EQUAL "${VCPKG_LIBRARY_LINKAGE}" "dynamic" BUILD_SHARED_LIBS)
+
+vcpkg_cmake_configure(
+    SOURCE_PATH "${SOURCE_PATH}"
+)
+
+vcpkg_cmake_install()
+vcpkg_copy_pdbs()
+vcpkg_cmake_config_fixup()
+
+vcpkg_install_copyright(FILE_LIST "${SOURCE_PATH}/LICENSE")
+file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug/include")
