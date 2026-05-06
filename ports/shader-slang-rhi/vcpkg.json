@@ -1,7 +1,6 @@
 {
   "name": "shader-slang-rhi",
   "version": "2026.6.5",
-  "port-version": 1,
   "description": "The slang-rhi library provides a render hardware interface for the Slang shading language.",
   "homepage": "https://github.com/shader-slang/slang-rhi",
   "license": "Apache-2.0 WITH LLVM-exception",

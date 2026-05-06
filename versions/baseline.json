@@ -3,6 +3,10 @@
     "flecs": {
       "baseline": "4.1.5",
       "port-version": 0
+    },
+    "shader-slang-rhi": {
+      "baseline": "2026.6.5",
+      "port-version": 0
     }
   }
 }
