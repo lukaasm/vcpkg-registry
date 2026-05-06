@@ -13,7 +13,7 @@
       "port-version": 1
     },
     "shader-slang-rhi": {
-      "baseline": "0",
+      "baseline": "2026.6.5",
       "port-version": 0
     }
   }
