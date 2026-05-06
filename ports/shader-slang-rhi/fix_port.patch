@@ -1,50 +1,59 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 1e29fd1..bff9b7d 100644
+index ee54dea..a12e296 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -248,6 +248,10 @@ macro(copy_file IN_FILE OUT_DIR)
-     endif()
+@@ -274,7 +274,7 @@ macro(copy_file IN_FILE OUT_DIR)
  endmacro()
  
-+find_package(slang CONFIG REQUIRED)
-+target_link_libraries(slang-rhi PUBLIC slang::slang)
-+
-+if(0)
  # Fetch slang
- if(SLANG_RHI_FETCH_SLANG)
+-if(SLANG_RHI_FETCH_SLANG)
++if(0)
      set(SLANG_VERSION ${SLANG_RHI_FETCH_SLANG_VERSION})
-@@ -330,7 +334,7 @@ if(NOT SLANG_RHI_BUILD_FROM_SLANG_REPO)
-         copy_file(${SLANG_RHI_SLANG_BINARY_DIR}/bin/slang-rt.dll .)
-     endif()
- endif()
--
-+endif()
- # Slang distributes prelude headers in the "include" directory along the other headers.
- # However, in a slang build tree, the files are not in the "include" directory but in a separate "prelude" directory.
- # Make sure to include the prelude directory if it exists.
-@@ -431,7 +435,7 @@ if(SLANG_RHI_ENABLE_OPTIX)
+     set(SLANG_URL "https://github.com/shader-slang/slang/releases/download/v${SLANG_VERSION}/slang-${SLANG_VERSION}")
+ 
+@@ -310,7 +310,7 @@ endif()
+ set(SLANG_RHI_SLANG_INCLUDE_DIR ${SLANG_RHI_SLANG_INCLUDE_DIR} CACHE STRING "Slang include directory")
+ set(SLANG_RHI_SLANG_BINARY_DIR ${SLANG_RHI_SLANG_BINARY_DIR} CACHE STRING "Slang binary directory")
+ unset(SLANG_RHI_SLANG_INCLUDE_DIR)
+-if(NOT SLANG_RHI_BUILD_FROM_SLANG_REPO)
++if(0)
+     function(slang_rhi_add_library_slang)
+         if(CMAKE_SYSTEM_NAME STREQUAL "Emscripten")
+             add_library(slang STATIC IMPORTED GLOBAL)
+@@ -374,7 +374,8 @@ if(NOT SLANG_RHI_BUILD_FROM_SLANG_REPO)
  endif()
  
- # Fetch & setup Vulkan headers
+ # Always link to slang, either the fetched one or the one provided by the parent project.
+-target_link_libraries(slang-rhi PUBLIC slang)
++find_package(slang CONFIG REQUIRED)
++target_link_libraries(slang-rhi PUBLIC slang::slang)
+ 
+ # Setup D3D12MemoryAllocator
+ if(SLANG_RHI_ENABLE_D3D12)
+@@ -394,7 +395,7 @@ if(SLANG_RHI_ENABLE_D3D12)
+ endif()
+ 
+ # Setup VulkanMemoryAllocator
 -if(SLANG_RHI_ENABLE_VULKAN)
 +if(0)
-     message(STATUS "Fetching Vulkan headers ...")
-     FetchPackage(vulkan_headers URL ${SLANG_RHI_VULKAN_HEADERS_URL})
-     add_library(slang-rhi-vulkan-headers INTERFACE)
-@@ -498,7 +502,10 @@ configure_file(
+     add_library(slang-rhi-vma STATIC)
+     target_sources(slang-rhi-vma PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/external/vma/vk_mem_alloc.cpp)
+     target_include_directories(slang-rhi-vma PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/external/vma)
+@@ -589,8 +590,10 @@ configure_file(
      ${CMAKE_CURRENT_SOURCE_DIR}/include/slang-rhi-config.h.in
      ${CMAKE_CURRENT_BINARY_DIR}/include/slang-rhi-config.h
  )
 -target_include_directories(slang-rhi PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/include)
+-
 +target_include_directories(slang-rhi PUBLIC
 +    $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
 +    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 +)
- 
  if(APPLE)
      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-assume -Wno-switch")
-@@ -560,12 +567,12 @@ target_compile_options(slang-rhi-warnings INTERFACE
-     >
+ endif()
+@@ -656,12 +659,12 @@ target_compile_options(slang-rhi-warnings INTERFACE
+     $<$<BOOL:${EMSCRIPTEN}>:-Wno-c2y-extensions>
  )
  add_library(slang-rhi-warnings-as-errors INTERFACE)
 -target_compile_options(slang-rhi-warnings-as-errors INTERFACE
@@ -53,27 +62,26 @@ index 1e29fd1..bff9b7d 100644
 -    $<$<CXX_COMPILER_ID:Clang>:-Werror>
 -    $<$<CXX_COMPILER_ID:AppleClang>:-Werror>
 -)
-+# target_compile_options(slang-rhi-warnings-as-errors INTERFACE
-+#     $<$<CXX_COMPILER_ID:MSVC>:/WX>
-+#     $<$<CXX_COMPILER_ID:GNU>:-Werror>
-+#     $<$<CXX_COMPILER_ID:Clang>:-Werror>
-+#     $<$<CXX_COMPILER_ID:AppleClang>:-Werror>
-+# )
++#target_compile_options(slang-rhi-warnings-as-errors INTERFACE
++#    $<$<CXX_COMPILER_ID:MSVC>:/WX>
++#    $<$<CXX_COMPILER_ID:GNU>:-Werror>
++#    $<$<CXX_COMPILER_ID:Clang>:-Werror>
++#    $<$<CXX_COMPILER_ID:AppleClang>:-Werror>
++#)
  target_link_libraries(slang-rhi PRIVATE slang-rhi-warnings slang-rhi-warnings-as-errors)
  
- target_sources(slang-rhi PRIVATE
-@@ -702,7 +709,9 @@ if(SLANG_RHI_ENABLE_VULKAN)
+ # Make using non-trivial static variables in slang-rhi a compile error.
+@@ -813,7 +816,8 @@ if(SLANG_RHI_ENABLE_VULKAN)
          src/vulkan/vk-texture.cpp
          src/vulkan/vk-utils.cpp
      )
 -    target_link_libraries(slang-rhi PRIVATE slang-rhi-vulkan-headers)
-+
 +    find_package( VulkanHeaders CONFIG REQUIRED )
 +    target_link_libraries(slang-rhi PUBLIC Vulkan::Headers)
  endif()
  
  if(SLANG_RHI_ENABLE_METAL)
-@@ -783,7 +792,12 @@ if(SLANG_RHI_ENABLE_WGPU)
+@@ -897,7 +901,11 @@ if(SLANG_RHI_ENABLE_WGPU)
      )
  endif()
  
@@ -83,11 +91,10 @@ index 1e29fd1..bff9b7d 100644
 +        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
 +        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 +)
-+
  target_include_directories(slang-rhi PRIVATE src)
  target_compile_definitions(slang-rhi
      PUBLIC
-@@ -985,8 +999,13 @@ endif()
+@@ -1134,8 +1142,13 @@ endif()
  # Install
  if(SLANG_RHI_INSTALL)
      install(
@@ -102,7 +109,7 @@ index 1e29fd1..bff9b7d 100644
          RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
      )
      install(
-@@ -998,4 +1017,28 @@ if(SLANG_RHI_INSTALL)
+@@ -1147,4 +1160,28 @@ if(SLANG_RHI_INSTALL)
          FILES ${CMAKE_CURRENT_BINARY_DIR}/include/slang-rhi-config.h
          DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
      )
@@ -132,14 +139,88 @@ index 1e29fd1..bff9b7d 100644
 +    )
  endif()
 diff --git a/include/slang-rhi.h b/include/slang-rhi.h
-index 2ff4aa6..f73d8b6 100644
+index 2be55f9..524d7e9 100644
 --- a/include/slang-rhi.h
 +++ b/include/slang-rhi.h
-@@ -19,6 +19,7 @@
- #endif
- #endif
- #else // SLANG_RHI_SHARED
-+#error "sss"
- #define SLANG_RHI_API
- #endif // SLANG_RHI_SHARED
+@@ -713,7 +713,7 @@ struct BufferRange
+     bool operator!=(const BufferRange& other) const { return !(*this == other); }
+ };
  
+-static const BufferRange kEntireBuffer = BufferRange{0ull, ~0ull};
++static inline const BufferRange kEntireBuffer = BufferRange{0ull, ~0ull};
+ 
+ enum class BufferUsage
+ {
+@@ -878,9 +878,9 @@ struct SubresourceRange
+     bool operator!=(const SubresourceRange& other) const { return !(*this == other); }
+ };
+ 
+-static const SubresourceRange kEntireTexture = SubresourceRange{0, 0xffffffff, 0, 0xffffffff};
++static inline const SubresourceRange kEntireTexture = SubresourceRange{0, 0xffffffff, 0, 0xffffffff};
+ 
+-static const size_t kDefaultAlignment = 0xffffffff;
++static inline const size_t kDefaultAlignment = 0xffffffff;
+ 
+ /// Data for a single subresource of a texture.
+ ///
+@@ -927,7 +927,7 @@ struct SubresourceData
+     Size slicePitch;
+ };
+ 
+-static const uint32_t kRemainingTextureSize = 0xffffffff;
++static inline const uint32_t kRemainingTextureSize = 0xffffffff;
+ struct Offset3D
+ {
+     uint32_t x = 0;
+@@ -997,9 +997,9 @@ struct SubresourceLayout
+ 
+ class ISampler;
+ 
+-static const uint32_t kAllLayers = 0xffffffff;
+-static const uint32_t kAllMips = 0xffffffff;
+-static const SubresourceRange kAllSubresources = {0, kAllLayers, 0, kAllMips};
++static inline const uint32_t kAllLayers = 0xffffffff;
++static inline const uint32_t kAllMips = 0xffffffff;
++static inline const SubresourceRange kAllSubresources = {0, kAllLayers, 0, kAllMips};
+ 
+ struct TextureDesc
+ {
+diff --git a/src/command-list.h b/src/command-list.h
+index 79f8fbe..294e249 100644
+--- a/src/command-list.h
++++ b/src/command-list.h
+@@ -360,7 +360,7 @@ struct Traits
+     template<>                                                                                                         \
+     struct Traits<x>                                                                                                   \
+     {                                                                                                                  \
+-        static const CommandID id = CommandID::x;                                                                      \
++        static inline const CommandID id = CommandID::x;                                                                      \
+         static inline const char* name = #x;                                                                           \
+     };
+ 
+diff --git a/src/cpu/cpu-texture.h b/src/cpu/cpu-texture.h
+index 86b2f7d..f9a767c 100644
+--- a/src/cpu/cpu-texture.h
++++ b/src/cpu/cpu-texture.h
+@@ -11,7 +11,7 @@ struct CPUTextureBaseShapeInfo
+     int32_t implicitArrayElementCount;
+ };
+ 
+-static const CPUTextureBaseShapeInfo kCPUTextureBaseShapeInfos[] = {
++static inline const CPUTextureBaseShapeInfo kCPUTextureBaseShapeInfos[] = {
+     {1, 1, 1}, // Texture1D
+     {1, 1, 1}, // Texture1DArray
+     {2, 2, 1}, // Texture2D
+diff --git a/src/cuda/cuda-heap.h b/src/cuda/cuda-heap.h
+index 1a023c8..dba2c34 100644
+--- a/src/cuda/cuda-heap.h
++++ b/src/cuda/cuda-heap.h
+@@ -13,7 +13,7 @@ class HeapImpl : public Heap
+ public:
+     // Selected based on (https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#alignment)
+     // Highest alignment requirement in CUDA is 128, for optimal memcpy performance.
+-    static const Size kAlignment = 128;
++    static inline const Size kAlignment = 128;
+ 
+     struct PendingFree
+     {
