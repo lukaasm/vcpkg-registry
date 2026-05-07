@@ -8,6 +8,10 @@
       "baseline": "1.0.0",
       "port-version": 0
     },
+    "imguicolortextedit": {
+      "baseline": "0.0.1",
+      "port-version": 0
+    },
     "lsp": {
       "baseline": "1.3.0",
       "port-version": 1

@@ -16,3 +16,6 @@
 [submodule "sources/imanim"]
 	path = sources/imanim
 	url = https://github.com/soufianekhiat/ImAnim.git
+[submodule "sources/imguicolortextedit"]
+	path = sources/imguicolortextedit
+	url = https://github.com/goossens/ImGuiColorTextEdit.git

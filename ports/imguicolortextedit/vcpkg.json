@@ -1,0 +1,19 @@
+{
+  "name": "imguicolortextedit",
+  "version": "0.0.1",
+  "description": "imguicolortextedit (scaffold - update metadata and portfile).",
+  "homepage": "https://github.com/goossens/ImGuiColorTextEdit.git",
+  "license": "MIT",
+  "dependencies": [
+    "dtl",
+    "imgui",
+    {
+      "name": "vcpkg-cmake",
+      "host": true
+    },
+    {
+      "name": "vcpkg-cmake-config",
+      "host": true
+    }
+  ]
+}
