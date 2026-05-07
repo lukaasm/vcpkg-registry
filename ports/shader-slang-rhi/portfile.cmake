@@ -11,7 +11,7 @@ if (NOT IS_DIRECTORY ${SOURCE_PATH})
         SHA512 7a5a70a9435700659f68851ad7285ef695f2be72794a86175d821feedee220349122a7004e96d29db0fe076c3bd16c40199150744a90056f022a34bd8903fa47
         HEAD_REF main
         PATCHES
-            #fix_port.patch
+            fix_port.patch
     )
 endif()
 
