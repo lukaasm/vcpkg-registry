@@ -24,6 +24,7 @@ target_sources(
         im_anim_doc.cpp
         im_anim_demo.cpp
 )
+install(FILES im_anim.h DESTINATION include )
 
 install(
     TARGETS ${PROJECT_NAME}
