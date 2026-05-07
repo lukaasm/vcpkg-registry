@@ -4,6 +4,10 @@
       "baseline": "4.1.5",
       "port-version": 0
     },
+    "imanim": {
+      "baseline": "1.0.0",
+      "port-version": 0
+    },
     "lsp": {
       "baseline": "1.3.0",
       "port-version": 1

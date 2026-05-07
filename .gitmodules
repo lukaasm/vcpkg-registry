@@ -13,3 +13,6 @@
 [submodule "sources/shader-slang-rhi"]
 	path = sources/shader-slang-rhi
 	url = https://github.com/shader-slang/slang-rhi.git
+[submodule "sources/imanim"]
+	path = sources/imanim
+	url = https://github.com/soufianekhiat/ImAnim.git
