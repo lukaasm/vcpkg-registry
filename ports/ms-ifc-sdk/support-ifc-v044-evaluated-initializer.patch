@@ -1,0 +1,46 @@
+diff --git a/include/ifc/abstract-sgraph.hxx b/include/ifc/abstract-sgraph.hxx
+index f2ebf94..cdf0b40 100644
+--- a/include/ifc/abstract-sgraph.hxx
++++ b/include/ifc/abstract-sgraph.hxx
+@@ -3219,6 +3219,7 @@ namespace ifc {
+                               // file instead of a TextOffset for header units.
+         FileHash,             // A file hash associated with an indexed source file after compilation with MSVC.
+         DebugRecord,          // A debug record for this decl is.
++        EvaluatedInitializer, // The evaluated (constant-folded) initializer associated with a declaration.
+         Count,
+     };
+ 
+@@ -3378,6 +3379,8 @@ namespace ifc {
+                                 TraitTag<MsvcTraitSort::FileHash> {};
+         struct MsvcDebugRecord : AssociatedTrait<DeclIndex, MsvcDebugRecordIndex>,
+                                 TraitTag<MsvcTraitSort::DebugRecord> {};
++        struct MsvcEvaluatedInitializer : AssociatedTrait<DeclIndex, ExprIndex>,
++                                          TraitTag<MsvcTraitSort::EvaluatedInitializer> {};
+     } // namespace symbolic::trait
+ 
+     namespace symbolic::vendor {
+diff --git a/include/ifc/version.hxx b/include/ifc/version.hxx
+index c7a08dc..f244e98 100644
+--- a/include/ifc/version.hxx
++++ b/include/ifc/version.hxx
+@@ -22,7 +22,7 @@ namespace ifc {
+     inline constexpr FormatVersion MinimumFormatVersion{Version{0}, Version{43}};
+ 
+     // The current version of file format emitted by the toolset
+-    inline constexpr FormatVersion CurrentFormatVersion = MinimumFormatVersion;
++    inline constexpr FormatVersion CurrentFormatVersion{Version{0}, Version{44}};
+ } // namespace ifc
+ 
+ #endif // IFC_VERSION_INCLUDED
+diff --git a/src/sgraph.cxx b/src/sgraph.cxx
+index dfe2168..e9023ed 100644
+--- a/src/sgraph.cxx
++++ b/src/sgraph.cxx
+@@ -386,6 +386,7 @@ namespace ifc {
+             {MsvcTraitSort::HeaderUnitSourceFile, ".msvc.trait.header-unit-source-file"},
+             {MsvcTraitSort::FileHash, ".msvc.trait.file-hash"},
+             {MsvcTraitSort::DebugRecord, ".msvc.trait.debug-record"},
++            {MsvcTraitSort::EvaluatedInitializer, ".msvc.trait.evaluated-initializer"},
+         };
+ 
+         static_assert(retractible_by_key(msvc_traitsort_table));
