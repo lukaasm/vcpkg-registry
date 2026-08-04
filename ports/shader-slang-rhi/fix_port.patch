@@ -1,8 +1,8 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index ee54dea..a12e296 100644
+index 11bc9d4..2865423 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -274,7 +274,7 @@ macro(copy_file IN_FILE OUT_DIR)
+@@ -300,7 +300,7 @@ macro(copy_file IN_FILE OUT_DIR)
  endmacro()
  
  # Fetch slang
@@ -10,8 +10,8 @@ index ee54dea..a12e296 100644
 +if(0)
      set(SLANG_VERSION ${SLANG_RHI_FETCH_SLANG_VERSION})
      set(SLANG_URL "https://github.com/shader-slang/slang/releases/download/v${SLANG_VERSION}/slang-${SLANG_VERSION}")
- 
-@@ -310,7 +310,7 @@ endif()
+     # Version string for which bundled hashes are provided; update together with the hashes below.
+@@ -365,7 +365,7 @@ endif()
  set(SLANG_RHI_SLANG_INCLUDE_DIR ${SLANG_RHI_SLANG_INCLUDE_DIR} CACHE STRING "Slang include directory")
  set(SLANG_RHI_SLANG_BINARY_DIR ${SLANG_RHI_SLANG_BINARY_DIR} CACHE STRING "Slang binary directory")
  unset(SLANG_RHI_SLANG_INCLUDE_DIR)
@@ -20,7 +20,7 @@ index ee54dea..a12e296 100644
      function(slang_rhi_add_library_slang)
          if(CMAKE_SYSTEM_NAME STREQUAL "Emscripten")
              add_library(slang STATIC IMPORTED GLOBAL)
-@@ -374,7 +374,8 @@ if(NOT SLANG_RHI_BUILD_FROM_SLANG_REPO)
+@@ -430,7 +430,8 @@ if(NOT SLANG_RHI_BUILD_FROM_SLANG_REPO)
  endif()
  
  # Always link to slang, either the fetched one or the one provided by the parent project.
@@ -30,7 +30,7 @@ index ee54dea..a12e296 100644
  
  # Setup D3D12MemoryAllocator
  if(SLANG_RHI_ENABLE_D3D12)
-@@ -394,7 +395,7 @@ if(SLANG_RHI_ENABLE_D3D12)
+@@ -450,7 +451,7 @@ if(SLANG_RHI_ENABLE_D3D12)
  endif()
  
  # Setup VulkanMemoryAllocator
@@ -39,7 +39,7 @@ index ee54dea..a12e296 100644
      add_library(slang-rhi-vma STATIC)
      target_sources(slang-rhi-vma PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/external/vma/vk_mem_alloc.cpp)
      target_include_directories(slang-rhi-vma PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/external/vma)
-@@ -589,8 +590,10 @@ configure_file(
+@@ -650,8 +651,10 @@ configure_file(
      ${CMAKE_CURRENT_SOURCE_DIR}/include/slang-rhi-config.h.in
      ${CMAKE_CURRENT_BINARY_DIR}/include/slang-rhi-config.h
  )
@@ -52,7 +52,7 @@ index ee54dea..a12e296 100644
  if(APPLE)
      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-assume -Wno-switch")
  endif()
-@@ -656,12 +659,12 @@ target_compile_options(slang-rhi-warnings INTERFACE
+@@ -717,12 +720,12 @@ target_compile_options(slang-rhi-warnings INTERFACE
      $<$<BOOL:${EMSCRIPTEN}>:-Wno-c2y-extensions>
  )
  add_library(slang-rhi-warnings-as-errors INTERFACE)
@@ -71,7 +71,7 @@ index ee54dea..a12e296 100644
  target_link_libraries(slang-rhi PRIVATE slang-rhi-warnings slang-rhi-warnings-as-errors)
  
  # Make using non-trivial static variables in slang-rhi a compile error.
-@@ -813,7 +816,8 @@ if(SLANG_RHI_ENABLE_VULKAN)
+@@ -875,7 +878,8 @@ if(SLANG_RHI_ENABLE_VULKAN)
          src/vulkan/vk-texture.cpp
          src/vulkan/vk-utils.cpp
      )
@@ -81,7 +81,7 @@ index ee54dea..a12e296 100644
  endif()
  
  if(SLANG_RHI_ENABLE_METAL)
-@@ -897,7 +901,11 @@ if(SLANG_RHI_ENABLE_WGPU)
+@@ -959,7 +963,11 @@ if(SLANG_RHI_ENABLE_WGPU)
      )
  endif()
  
@@ -94,7 +94,7 @@ index ee54dea..a12e296 100644
  target_include_directories(slang-rhi PRIVATE src)
  target_compile_definitions(slang-rhi
      PUBLIC
-@@ -1134,8 +1142,13 @@ endif()
+@@ -1210,8 +1218,13 @@ endif()
  # Install
  if(SLANG_RHI_INSTALL)
      install(
@@ -109,7 +109,7 @@ index ee54dea..a12e296 100644
          RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
      )
      install(
-@@ -1147,4 +1160,28 @@ if(SLANG_RHI_INSTALL)
+@@ -1223,4 +1236,28 @@ if(SLANG_RHI_INSTALL)
          FILES ${CMAKE_CURRENT_BINARY_DIR}/include/slang-rhi-config.h
          DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
      )
@@ -139,10 +139,10 @@ index ee54dea..a12e296 100644
 +    )
  endif()
 diff --git a/include/slang-rhi.h b/include/slang-rhi.h
-index 2be55f9..8df00bd 100644
+index 64975b6..9ecb387 100644
 --- a/include/slang-rhi.h
 +++ b/include/slang-rhi.h
-@@ -713,7 +713,7 @@ struct BufferRange
+@@ -716,7 +716,7 @@ struct BufferRange
      bool operator!=(const BufferRange& other) const { return !(*this == other); }
  };
  
@@ -151,7 +151,7 @@ index 2be55f9..8df00bd 100644
  
  enum class BufferUsage
  {
-@@ -878,9 +878,9 @@ struct SubresourceRange
+@@ -881,9 +881,9 @@ struct SubresourceRange
      bool operator!=(const SubresourceRange& other) const { return !(*this == other); }
  };
  
@@ -163,7 +163,7 @@ index 2be55f9..8df00bd 100644
  
  /// Data for a single subresource of a texture.
  ///
-@@ -927,7 +927,7 @@ struct SubresourceData
+@@ -930,7 +930,7 @@ struct SubresourceData
      Size slicePitch;
  };
  
@@ -172,7 +172,7 @@ index 2be55f9..8df00bd 100644
  struct Offset3D
  {
      uint32_t x = 0;
-@@ -997,9 +997,9 @@ struct SubresourceLayout
+@@ -1000,9 +1000,9 @@ struct SubresourceLayout
  
  class ISampler;
  
