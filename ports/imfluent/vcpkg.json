@@ -1,6 +1,6 @@
 {
   "name": "imfluent",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Fluent-styled widget library for Dear ImGui (Microsoft Fluent 2 design system).",
   "homepage": "https://github.com/lukaasm/ImFluent",
   "license": "MIT",

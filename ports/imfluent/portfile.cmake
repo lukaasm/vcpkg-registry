@@ -5,8 +5,8 @@ if (NOT IS_DIRECTORY ${SOURCE_PATH})
     vcpkg_from_github(
         OUT_SOURCE_PATH SOURCE_PATH
         REPO lukaasm/ImFluent
-        REF 59d8ff0decd1f05538339dde6d55e0aaea28f583
-        SHA512 a47d4579caddc3a28f1d58c951298448eb3b21522eabc0a643c0ea2c0949d87049af554e8a84963221b81fc55111221fddd98e660f72ce7af97d951b9098aaa8
+        REF fe7cf3ef784afc81aed55f24f39fcaa15cdf96cb
+        SHA512 1b9d471fc79b8ae4f542f22144553ff123ccaa7d3d3c292f874c11185a8688b7a5eb19a89e69890c02429c25316401dbdc41fad51531412f974f5a986e8367e1
         HEAD_REF main
     )
 endif()
